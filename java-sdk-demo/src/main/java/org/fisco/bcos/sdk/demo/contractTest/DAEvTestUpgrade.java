@@ -1,0 +1,229 @@
+package org.fisco.bcos.sdk.demo.contractTest;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
+import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
+import org.fisco.bcos.sdk.demo.contract.DAEvidenceController;
+import org.fisco.bcos.sdk.v3.BcosSDK;
+import org.fisco.bcos.sdk.v3.client.Client;
+import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
+import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
+import org.fisco.bcos.sdk.v3.model.ConstantConfig;
+import org.fisco.bcos.sdk.v3.model.CryptoType;
+import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
+
+public class DAEvTestUpgrade {
+    private static Client client;
+
+    public static void Usage() {
+        System.out.println(" Usage:");
+        System.out.println("===== DAEvidenceController.sol test===========");
+        System.out.println(
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgrade [groupId] [committeeAddr].");
+    }
+
+    public static byte[] hexStringToByteArray(String hex) {
+        int len = hex.length();
+        if (len % 2 != 0) {
+            throw new IllegalArgumentException("Invalid hex string");
+        }
+
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] =
+                    (byte)
+                            ((Character.digit(hex.charAt(i), 16) << 4)
+                                    + Character.digit(hex.charAt(i + 1), 16));
+        }
+
+        return data;
+    }
+
+    public static String byteArrayToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < bytes.length; ++i) {
+            sb.append(String.format("%02X", bytes[i])); // %02X表示输出两位十六进制值
+
+            if (i != bytes.length - 1) {
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString().trim();
+    }
+
+    public static void main(String[] args)
+            throws ContractException, IOException, InterruptedException {
+        try {
+            String configFileName = ConstantConfig.CONFIG_FILE_NAME;
+            URL configUrl = DAEvTestUpgrade.class.getClassLoader().getResource(configFileName);
+            if (configUrl == null) {
+                throw new IOException("The configFile " + configFileName + " doesn't exist!");
+            }
+
+            if (args.length < 2) {
+                Usage();
+                return;
+            }
+            String groupId = args[0];
+            String committeePath = args[1];
+
+            String configFile = configUrl.getPath();
+            BcosSDK sdk = BcosSDK.build(configFile);
+            client = sdk.getClient(groupId);
+
+            BlockNumber blockNumber = client.getBlockNumber();
+            System.out.println("Current BlockNumber : " + blockNumber.getBlockNumber());
+
+            // CryptoSuite cryptoSuite = new CryptoSuite(client.getCryptoType());
+            CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.SM_TYPE);
+            System.out.println("CryptoType.SM_TYPE valuse is: " + CryptoType.SM_TYPE);
+            System.out.println("client.getCryptoType: " + client.getCryptoType());
+            System.out.println("cryptoSuite Type: " + cryptoSuite.getCryptoTypeConfig());
+
+            // load from existing contract address
+            cryptoSuite.loadAccount("pem", committeePath, "");
+            CryptoKeyPair committee = cryptoSuite.getCryptoKeyPair();
+            System.out.println("Account: " + committee.getAddress());
+            client.getCryptoSuite().setCryptoKeyPair(committee);
+            // DAEvidenceController xx =
+            // DAEvidenceController.load("0x36f1084cc0458479d1f2ef0953c91c4399887470", client,
+            // committee);
+            DAEvProxyAdmin yy =
+                    DAEvProxyAdmin.load(
+                            "0x7c576617f7859d9213a05d32c1c55c525018282b", client, committee);
+            String stryyaddr = yy.getContractAddress();
+            System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
+            DAEvProxy zz =
+                    DAEvProxy.load("0x66a9ca0c68bb5ddc2bf5efc07d896fda0d48b89c", client, committee);
+            String strzzaddr = zz.getContractAddress();
+            System.out.println("Load DAEvProxy finish: " + strzzaddr);
+
+            byte[] gmbytes =
+                    hexStringToByteArray("ea605f3d"); // 0xea605f3d为国密版本下initialize()函数的方法签名
+
+            String strdata = "530EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
+            byte[] evid = hexStringToByteArray(strdata);
+            String text = "this is a test";
+
+            DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
+
+            System.out.println("---------------------------------------");
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
+                    xx_2.getRegisteredData(text); // 成功
+            System.out.println("result new 1: " + resultnew.getValue1());
+            System.out.println("result new 2: " + resultnew.getValue2());
+            System.out.println("result new 3: " + resultnew.getValue3());
+            System.out.println("result new 4: " + resultnew.getValue4());
+            System.out.println("result new 5: " + resultnew.getValue5());
+            System.out.println("result new 6: " + resultnew.getValue6());
+
+            String strdata1 = "640EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
+            byte[] evid1 = hexStringToByteArray(strdata1);
+            String text1 = "this is a test1";
+
+            System.out.println("---------------------------------------");
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew2 =
+                    xx_2.getRegisteredData(text1); // 成功
+            System.out.println("result new for get evid1 1: " + resultnew2.getValue1());
+            System.out.println("result new for get evid1 2: " + resultnew2.getValue2());
+            System.out.println("result new for get evid1 3: " + resultnew2.getValue3());
+            System.out.println("result new for get evid1 4: " + resultnew2.getValue4());
+            System.out.println("result new for get evid1 5: " + resultnew2.getValue5());
+            System.out.println("result new for get evid1 6: " + resultnew2.getValue6());
+
+            System.out.println("---------------upgrade-------------------");
+            TransactionReceipt upgradeReceipt =
+                    yy.upgrade(
+                            strzzaddr,
+                            "0xdac1e325a55fd0dec10d6cde72f5b4fb7f3eac91"); // 这个实际会调用 strzzaddr 的
+            // upgradeTo
+            System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
+            System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+
+            System.out.println("---------------------------------------");
+            // String strChainName = xx_2.getChainName(); // 成功
+            // System.out.println("strChainName: " + strChainName);
+
+            System.out.println("---------------------------------------");
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew_1 =
+                    xx_2.getRegisteredData(text); // 成功
+            System.out.println("resultnew_1 1: " + resultnew_1.getValue1());
+            System.out.println("resultnew_1 2: " + resultnew_1.getValue2());
+            System.out.println("resultnew_1 3: " + resultnew_1.getValue3());
+            System.out.println("resultnew_1 4: " + resultnew_1.getValue4());
+            System.out.println("resultnew_1 5: " + resultnew_1.getValue5());
+            System.out.println("resultnew_1 6: " + resultnew_1.getValue6());
+
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew2_1 =
+                    xx_2.getRegisteredData(text1); // 成功
+            System.out.println("resultnew2_1 for get evid1 1: " + resultnew2_1.getValue1());
+            System.out.println("resultnew2_1 for get evid1 2: " + resultnew2_1.getValue2());
+            System.out.println("resultnew2_1 for get evid1 3: " + resultnew2_1.getValue3());
+            System.out.println("resultnew2_1 for get evid1 4: " + resultnew2_1.getValue4());
+            System.out.println("resultnew2_1 for get evid1 5: " + resultnew2_1.getValue5());
+            System.out.println("resultnew2_1 for get evid1 6: " + resultnew2_1.getValue6());
+
+            List<String> strArrDataHash =
+                    new ArrayList<String>() {
+                        {
+                            add("a");
+                        }
+                    };
+            List<String> strArrDataRight =
+                    new ArrayList<String>() {
+                        {
+                            add("b");
+                        }
+                    };
+            List<String> strArrMetaData =
+                    new ArrayList<String>() {
+                        {
+                            add("c");
+                        }
+                    };
+            List<String> strArrvariableData =
+                    new ArrayList<String>() {
+                        {
+                            add("d");
+                        }
+                    };
+            TransactionReceipt storeReceipt =
+                    xx_2.registerDataRight(
+                            "4",
+                            "4",
+                            strArrDataHash,
+                            strArrDataRight,
+                            strArrMetaData,
+                            strArrvariableData);
+            System.out.println(
+                    "storeDAVerifyEvidence Tx before upgrade status: " + storeReceipt.isStatusOK());
+            System.out.println(
+                    "storeDAVerifyEvidence TX before upgrade hash: "
+                            + storeReceipt.getTransactionHash());
+
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean>
+                    resultnew3_11 = xx_2.getRegisteredData("4"); // 成功
+            System.out.println("resultnew3_11 for get evid1 1: " + resultnew3_11.getValue1());
+            System.out.println("resultnew3_11 for get evid1 2: " + resultnew3_11.getValue2());
+            System.out.println("resultnew3_11 for get evid1 3: " + resultnew3_11.getValue3());
+            System.out.println("resultnew3_11 for get evid1 4: " + resultnew3_11.getValue4());
+            System.out.println("resultnew3_11 for get evid1 5: " + resultnew3_11.getValue5());
+
+            blockNumber = client.getBlockNumber();
+            System.out.println("Current BlockNumber : " + blockNumber.getBlockNumber());
+
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+}
