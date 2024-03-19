@@ -10,7 +10,7 @@ import org.fisco.bcos.sdk.demo.contract.DAEvidenceController;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
-import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.ConstantConfig;
@@ -93,129 +93,61 @@ public class DAEvTestUpgrade {
             CryptoKeyPair committee = cryptoSuite.getCryptoKeyPair();
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
-            // DAEvidenceController xx =
-            // DAEvidenceController.load("0x36f1084cc0458479d1f2ef0953c91c4399887470", client,
-            // committee);
+            DAEvidenceController xx =
+                    DAEvidenceController.load(
+                            "0x2d877d67126d65e0090e0fd3f7b1de32684f8ad0", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x7c576617f7859d9213a05d32c1c55c525018282b", client, committee);
+                            "0x543468c4f9e9ebe4ac0305dfa65aaf511dde39f9", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0x66a9ca0c68bb5ddc2bf5efc07d896fda0d48b89c", client, committee);
+                    DAEvProxy.load("0xad2879be1a8e9d7f3a14d322d723445721c485c8", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
-
-            byte[] gmbytes =
-                    hexStringToByteArray("ea605f3d"); // 0xea605f3d为国密版本下initialize()函数的方法签名
-
-            String strdata = "530EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
-            byte[] evid = hexStringToByteArray(strdata);
-            String text = "this is a test";
 
             DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
 
             System.out.println("---------------------------------------");
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData(text); // 成功
-            System.out.println("result new 1: " + resultnew.getValue1());
-            System.out.println("result new 2: " + resultnew.getValue2());
-            System.out.println("result new 3: " + resultnew.getValue3());
-            System.out.println("result new 4: " + resultnew.getValue4());
-            System.out.println("result new 5: " + resultnew.getValue5());
-            System.out.println("result new 6: " + resultnew.getValue6());
 
-            String strdata1 = "640EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
-            byte[] evid1 = hexStringToByteArray(strdata1);
-            String text1 = "this is a test1";
+            TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
+            System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
+            System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
 
-            System.out.println("---------------------------------------");
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew2 =
-                    xx_2.getRegisteredData(text1); // 成功
-            System.out.println("result new for get evid1 1: " + resultnew2.getValue1());
-            System.out.println("result new for get evid1 2: " + resultnew2.getValue2());
-            System.out.println("result new for get evid1 3: " + resultnew2.getValue3());
-            System.out.println("result new for get evid1 4: " + resultnew2.getValue4());
-            System.out.println("result new for get evid1 5: " + resultnew2.getValue5());
-            System.out.println("result new for get evid1 6: " + resultnew2.getValue6());
+            List<String> strArrQueryRole = new ArrayList<>();
+            // strArrQueryRole = xx_2.queryUserRole1();
+            strArrQueryRole = xx_2.queryUserRole();
+            System.out.println("strArrQueryRole: " + strArrQueryRole.size());
+            for (int i = 0; i < strArrQueryRole.size(); i++) {
+                String element = strArrQueryRole.get(i);
+                System.out.println("strArrQueryRole name: " + element);
+            }
 
-            System.out.println("---------------upgrade-------------------");
-            TransactionReceipt upgradeReceipt =
-                    yy.upgrade(
-                            strzzaddr,
-                            "0xdac1e325a55fd0dec10d6cde72f5b4fb7f3eac91"); // 这个实际会调用 strzzaddr 的
-            // upgradeTo
-            System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
-            System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+            Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
+            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
+            System.out.println("getResult before upgrade 1: " + getResult.getValue1());
+            System.out.println("getResult before upgrade 2: " + getResult.getValue2());
+            System.out.println("getResult before upgrade 3: " + getResult.getValue3().size());
 
             System.out.println("---------------------------------------");
             // String strChainName = xx_2.getChainName(); // 成功
             // System.out.println("strChainName: " + strChainName);
 
+            System.out.println("---------------upgrade-------------------");
+            TransactionReceipt upgradeReceipt =
+                    yy.upgrade(
+                            strzzaddr,
+                            "0x09541d3200071d7bb4b2196533c1fe84d93d51c1"); // 这个实际会调用 strzzaddr 的
+            // upgradeTo
+            System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
+            System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+
             System.out.println("---------------------------------------");
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew_1 =
-                    xx_2.getRegisteredData(text); // 成功
-            System.out.println("resultnew_1 1: " + resultnew_1.getValue1());
-            System.out.println("resultnew_1 2: " + resultnew_1.getValue2());
-            System.out.println("resultnew_1 3: " + resultnew_1.getValue3());
-            System.out.println("resultnew_1 4: " + resultnew_1.getValue4());
-            System.out.println("resultnew_1 5: " + resultnew_1.getValue5());
-            System.out.println("resultnew_1 6: " + resultnew_1.getValue6());
-
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew2_1 =
-                    xx_2.getRegisteredData(text1); // 成功
-            System.out.println("resultnew2_1 for get evid1 1: " + resultnew2_1.getValue1());
-            System.out.println("resultnew2_1 for get evid1 2: " + resultnew2_1.getValue2());
-            System.out.println("resultnew2_1 for get evid1 3: " + resultnew2_1.getValue3());
-            System.out.println("resultnew2_1 for get evid1 4: " + resultnew2_1.getValue4());
-            System.out.println("resultnew2_1 for get evid1 5: " + resultnew2_1.getValue5());
-            System.out.println("resultnew2_1 for get evid1 6: " + resultnew2_1.getValue6());
-
-            List<String> strArrDataHash =
-                    new ArrayList<String>() {
-                        {
-                            add("a");
-                        }
-                    };
-            List<String> strArrDataRight =
-                    new ArrayList<String>() {
-                        {
-                            add("b");
-                        }
-                    };
-            List<String> strArrMetaData =
-                    new ArrayList<String>() {
-                        {
-                            add("c");
-                        }
-                    };
-            List<String> strArrvariableData =
-                    new ArrayList<String>() {
-                        {
-                            add("d");
-                        }
-                    };
-            TransactionReceipt storeReceipt =
-                    xx_2.registerDataRight(
-                            "4",
-                            "4",
-                            strArrDataHash,
-                            strArrDataRight,
-                            strArrMetaData,
-                            strArrvariableData);
-            System.out.println(
-                    "storeDAVerifyEvidence Tx before upgrade status: " + storeReceipt.isStatusOK());
-            System.out.println(
-                    "storeDAVerifyEvidence TX before upgrade hash: "
-                            + storeReceipt.getTransactionHash());
-
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean>
-                    resultnew3_11 = xx_2.getRegisteredData("4"); // 成功
-            System.out.println("resultnew3_11 for get evid1 1: " + resultnew3_11.getValue1());
-            System.out.println("resultnew3_11 for get evid1 2: " + resultnew3_11.getValue2());
-            System.out.println("resultnew3_11 for get evid1 3: " + resultnew3_11.getValue3());
-            System.out.println("resultnew3_11 for get evid1 4: " + resultnew3_11.getValue4());
-            System.out.println("resultnew3_11 for get evid1 5: " + resultnew3_11.getValue5());
+            Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
+            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
+            System.out.println("getResult after upgrade 1: " + getResult1.getValue1());
+            System.out.println("getResult after upgrade 2: " + getResult1.getValue2());
+            System.out.println("getResult after upgrade 3: " + getResult1.getValue3().size());
 
             blockNumber = client.getBlockNumber();
             System.out.println("Current BlockNumber : " + blockNumber.getBlockNumber());

@@ -39,10 +39,9 @@ contract DAEvidenceStorage is Initializable, DAEvidenceStorageLib {
                 _bindOuterInnerEid
                 _emitEvidence
     */
-    function _storeCommEvidence(bytes32 innerEid, string memory category, string[] memory indefinite, string[] memory metaData, string[] memory variableData) internal {
+    function _storeCommEvidence(bytes32 innerEid, string memory category, string[] memory metaData, string[] memory variableData) internal {
         require(_commEvidences[innerEid].timestamp == 0, "EvidenceStorage: udri already exists");
         _commEvidences[innerEid].category = category;
-        _commEvidences[innerEid].indefinite = indefinite;
         _commEvidences[innerEid].metaData = metaData;
         _commEvidences[innerEid].variableData = variableData;
         _commEvidences[innerEid].timestamp = block.timestamp;
@@ -80,9 +79,18 @@ contract DAEvidenceStorage is Initializable, DAEvidenceStorageLib {
         emit EvidenceCommStored(msg.sender, outerEid);
     }
 
-    function _getCommEvidenceById(bytes32 innerEid) internal view returns (bool, uint256, string memory category, string[] memory indefinite, string[] memory metaData, string[] memory variableData ) {
+    function _evidenceIsExist(bytes32 innerEid) internal view returns (bool) {
         CommEvidence storage evidence = _commEvidences[innerEid];
-        return (evidence.timestamp != 0, evidence.timestamp, evidence.category, evidence.indefinite, evidence.metaData, evidence.variableData);
+        return (evidence.timestamp != 0);
+    }
+
+    function _getCommEvidenceById(bytes32 innerEid) internal view returns (bool, uint256 timestamp, string memory category, string[] memory metaData, string[] memory variableData ) {
+        CommEvidence storage evidence = _commEvidences[innerEid];
+        return (evidence.timestamp != 0, evidence.timestamp, evidence.category, evidence.metaData, evidence.variableData);
+    }
+
+    function _getCommEvidenceStorageById(bytes32 innerEid) internal view returns (CommEvidence storage evidence) {
+        return _commEvidences[innerEid];
     }
 
     function _getCommEvidenceIndefiniteStringArray(bytes32 innerEid, string memory key) internal view returns(string[] memory value) {
@@ -169,6 +177,18 @@ contract DAEvidenceStorage is Initializable, DAEvidenceStorageLib {
         return (user.timestamp != 0, user.usci, user.name, user.evidenceCount, user.timestamp);
     }
 
+    function _getUseStoragerByBid(string memory bid) internal view returns (UserInfoV1 storage) {
+        return _usersV1[bid];
+    }
+
+    /* 新加用户确权存证数目 */
+    function _addEvidenceInUser(string memory bid, bytes32 key, bytes32 value) internal {
+        UserInfoV1 storage user = _usersV1[bid];
+        // require(bytes(usci).length > 0, "EvidenceStorage: Account not exists");
+        user.indefiniteBytes32.update(key, value);
+        user.evidenceCount = user.evidenceCount + 1;
+    }
+
     /* 获取用户某个角色的状态 */
     function _getUserRoleStatus(string memory bid, string memory role) internal view returns (uint32) {
         require(_usersV1[bid].timestamp != 0, "UserStorage: bid not exists");
@@ -183,6 +203,12 @@ contract DAEvidenceStorage is Initializable, DAEvidenceStorageLib {
         return _getUserByBid(bid);
     }
 
+    /* 通过用户account获取用户bid */
+    function _getUserBidByAccount(address account) internal view returns (bool, string memory) {
+        string memory bid = _userAddressToBid[account];
+        return (bytes(bid).length > 0, bid);
+    }
+
     /* 判断用户存在 */
     function _userExist(string memory bid) internal view returns (bool) {
         return _usersV1[bid].timestamp != 0;
@@ -190,8 +216,13 @@ contract DAEvidenceStorage is Initializable, DAEvidenceStorageLib {
 
     //
     function _bindOuterInnerEid(bytes32 outer, bytes32 inner) internal {
-        require(_outerEidToInnerEid[outer] != 0, "EvidenceStorage: bid not exists");
+        require(_outerEidToInnerEid[outer] == 0, "EvidenceStorage: bid already exists");
         _outerEidToInnerEid[outer] = inner;
+    }
+
+    function _GetInnerEidFromOuterEid(bytes32 outer) internal view returns (bytes32){
+        require(_outerEidToInnerEid[outer] != 0, "EvidenceStorage: bid not exists");
+        return _outerEidToInnerEid[outer];
     }
 
     //empty reserved space for future to add new variables

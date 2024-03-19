@@ -19,7 +19,8 @@ contract DAEvidenceStorageLib {
         string name;
         uint256 evidenceCount;
         address account;
-
+        DAEvidenceMap.DAMappingString indefiniteString;
+        DAEvidenceMap.DAMappingBytes32 indefiniteBytes32;
         mapping(bytes32 => uint32) role; // 0: 无； USER_STATUS_ACTIVE：正常； USER_STATUS_DISABLED：注销
 
         uint256 timestamp;
@@ -31,7 +32,6 @@ contract DAEvidenceStorageLib {
         DAEvidenceMap.DAMappingString indefiniteString;
         DAEvidenceMap.DAMappingUint32 indefiniteUint32;
         DAEvidenceMap.DAMappingBytes32 indefiniteBytes32;
-        string[] indefinite; // 不同的存证类型 传入不同的数据
 
         string[] metaData;
         string[] variableData;
@@ -44,6 +44,7 @@ contract DAEvidenceStorageLib {
         DAEvidenceMap.DAMappingStringArray byte32ToStringArrary;
         DAEvidenceMap.DAMappingString byte32ToString;
         DAEvidenceMap.DAMappingUint32 byte32ToUint32;
+        DAEvidenceMap.DAMappingBytes32 byte32ToBytes32;
     }
 
 }

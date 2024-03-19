@@ -2,6 +2,7 @@ package org.fisco.bcos.sdk.demo.contractTest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
@@ -9,6 +10,7 @@ import org.fisco.bcos.sdk.demo.contract.DAEvidenceController;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -92,34 +94,43 @@ public class DAEvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
-            // DAEvidenceController.load("0x36f1084cc0458479d1f2ef0953c91c4399887470", client,
+            // DAEvidenceController.load("0x2d877d67126d65e0090e0fd3f7b1de32684f8ad0", client,
             // committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x7c576617f7859d9213a05d32c1c55c525018282b", client, committee);
+                            "0x543468c4f9e9ebe4ac0305dfa65aaf511dde39f9", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x66a9ca0c68bb5ddc2bf5efc07d896fda0d48b89c", client, committee);
+                    DAEvProxy.load("0xad2879be1a8e9d7f3a14d322d723445721c485c8", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
             // System.out.println("Logic contract address: " + strlogicaddr);
 
-            byte[] gmbytes =
-                    hexStringToByteArray("ea605f3d"); // 0xea605f3d为国密版本下initialize()函数的方法签名
-
-            String strdata = "530EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
-            byte[] evid = hexStringToByteArray(strdata);
-            String text = "this is a test";
-
             DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
 
             System.out.println("---------------------------------------");
-            // String strChainName = xx_2.getChainName(); // 成功
-            // System.out.println("strChainName: " + strChainName);
+            List<String> strArrQueryRole = new ArrayList<>();
+            strArrQueryRole = xx_2.queryUserRole();
+            System.out.println("strArrQueryRole: " + strArrQueryRole.size());
+            for (int i = 0; i < strArrQueryRole.size(); i++) {
+                String element = strArrQueryRole.get(i);
+                System.out.println("strArrQueryRole name: " + element);
+            }
+
+            System.out.println("---------------------------------------");
+            Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
+            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
+            System.out.println("getResult 1: " + getResult.getValue1());
+            System.out.println("getResult 2: " + getResult.getValue2());
+            System.out.println("getResult 3: " + getResult.getValue3().size());
+            for (int i = 0; i < getResult.getValue3().size(); i++) {
+                String element = getResult.getValue3().get(i);
+                System.out.println("getResult 3 Roles name: " + element);
+            }
 
             System.out.println("---------------------------------------");
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData(text); // 成功
+                    xx_2.getRegisteredData("4"); // 成功
             System.out.println("result new 1: " + resultnew.getValue1());
             System.out.println("result new 2: " + resultnew.getValue2());
             System.out.println("result new 3: " + resultnew.getValue3());
@@ -127,19 +138,7 @@ public class DAEvTestGet {
             System.out.println("result new 5: " + resultnew.getValue5());
             System.out.println("result new 6: " + resultnew.getValue6());
 
-            String strdata1 = "640EE72E9ED0E80125F4A9C6CE2DB1061502B9CE760DA578B79566D8AE28816F";
-            byte[] evid1 = hexStringToByteArray(strdata1);
-            String text1 = "this is a test1";
-
             System.out.println("---------------------------------------");
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew2 =
-                    xx_2.getRegisteredData(text1); // 成功
-            System.out.println("result new for get evid1 1: " + resultnew2.getValue1());
-            System.out.println("result new for get evid1 2: " + resultnew2.getValue2());
-            System.out.println("result new for get evid1 3: " + resultnew2.getValue3());
-            System.out.println("result new for get evid1 4: " + resultnew2.getValue4());
-            System.out.println("result new for get evid1 5: " + resultnew2.getValue5());
-            System.out.println("result new for get evid1 6: " + resultnew2.getValue6());
 
             blockNumber = client.getBlockNumber();
             System.out.println("Current BlockNumber : " + blockNumber.getBlockNumber());
