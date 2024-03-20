@@ -95,14 +95,14 @@ public class DAEvTestUpgrade {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x2d877d67126d65e0090e0fd3f7b1de32684f8ad0", client, committee);
+                            "0x085e5b54f1d74c83eb090a43615dcfffc8cc38b7", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x543468c4f9e9ebe4ac0305dfa65aaf511dde39f9", client, committee);
+                            "0xa05de06bee6b6f2d58df33ded66dfb2a34f03200", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0xad2879be1a8e9d7f3a14d322d723445721c485c8", client, committee);
+                    DAEvProxy.load("0x758d22e50cac9b600e32c29f0c3e1f254f15f170", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
@@ -115,7 +115,6 @@ public class DAEvTestUpgrade {
             System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
 
             List<String> strArrQueryRole = new ArrayList<>();
-            // strArrQueryRole = xx_2.queryUserRole1();
             strArrQueryRole = xx_2.queryUserRole();
             System.out.println("strArrQueryRole: " + strArrQueryRole.size());
             for (int i = 0; i < strArrQueryRole.size(); i++) {
@@ -137,7 +136,7 @@ public class DAEvTestUpgrade {
             TransactionReceipt upgradeReceipt =
                     yy.upgrade(
                             strzzaddr,
-                            "0x09541d3200071d7bb4b2196533c1fe84d93d51c1"); // 这个实际会调用 strzzaddr 的
+                            "0xbe44557a4db3d422579bd1f8b6ebd8650527ed11"); // 这个实际会调用 strzzaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());

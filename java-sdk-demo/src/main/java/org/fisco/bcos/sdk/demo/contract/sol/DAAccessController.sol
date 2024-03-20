@@ -16,8 +16,10 @@ contract DAAccessController is AccessControlUpgradeable {
     }
 
     function revokeUserManagePermission(string memory bid) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
-        if(_usermanagers[bid]!=address(0))
+        if(_usermanagers[bid]!=address(0)) {
           _revokeRole(USERMANAGE_ROLE, _usermanagers[bid]);
+          _usermanagers[bid] = address(0);
+        }
     }
 
     function hasDAUserManageRole(string memory bid) public view virtual returns (bool) {

@@ -97,19 +97,16 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x2d877d67126d65e0090e0fd3f7b1de32684f8ad0", client, committee);
+                            "0x085e5b54f1d74c83eb090a43615dcfffc8cc38b7", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x543468c4f9e9ebe4ac0305dfa65aaf511dde39f9", client, committee);
+                            "0xa05de06bee6b6f2d58df33ded66dfb2a34f03200", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0xad2879be1a8e9d7f3a14d322d723445721c485c8", client, committee);
+                    DAEvProxy.load("0x758d22e50cac9b600e32c29f0c3e1f254f15f170", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
             // System.out.println("Logic contract address: " + strlogicaddr);
-
-            byte[] gmbytes =
-                    hexStringToByteArray("ea605f3d"); // 0xea605f3d为国密版本下initialize()函数的方法签名
 
             DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
 
@@ -119,12 +116,24 @@ public class DAEvTestSet {
             System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
             System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
 
-            List<String> strArrQueryRole = new ArrayList<>();
-            // strArrQueryRole = xx_2.queryUserRole1();
-            strArrQueryRole = xx_2.queryUserRole();
-            // String txt = xx.USER_ROLE_DATA_HOLDER();
-            // System.out.println("USER_ROLE_DATA_HOLDER: " + txt);
+            TransactionReceipt grandReceipt = xx_2.grantUserManagePermission("bid", strAccount);
+            System.out.println("grantUserManagePermission Tx status: " + grandReceipt.isStatusOK());
+            System.out.println(
+                    "grantUserManagePermission TX hash: " + grandReceipt.getTransactionHash());
 
+            Boolean hasif = xx_2.hasDAUserManageRole("bid");
+            System.out.println("hasDAUserManageRole hasif: " + hasif);
+
+            // TransactionReceipt revokeReceipt = xx_2.revokeUserManagePermission("bid");
+            // System.out.println(
+            //        "revokeUserManagePermission Tx status: " + revokeReceipt.isStatusOK());
+            // System.out.println(
+            //        "revokeUserManagePermission TX hash: " + revokeReceipt.getTransactionHash());
+            // Boolean hasif2 = xx_2.hasDAUserManageRole("bid");
+            // System.out.println("hasDAUserManageRole hasif2: " + hasif2);
+
+            List<String> strArrQueryRole = new ArrayList<>();
+            strArrQueryRole = xx_2.queryUserRole();
             System.out.println("strArrQueryRole: " + strArrQueryRole.size());
             for (int i = 0; i < strArrQueryRole.size(); i++) {
                 String element = strArrQueryRole.get(i);
@@ -136,7 +145,6 @@ public class DAEvTestSet {
                         {
                             add("data_holder");
                             add("reviewer");
-                            add("registry");
                             add("platform");
                         }
                     };
