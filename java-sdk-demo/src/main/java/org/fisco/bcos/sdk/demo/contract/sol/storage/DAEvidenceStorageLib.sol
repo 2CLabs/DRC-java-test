@@ -6,8 +6,15 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../utils/DAEvidenceMap.sol";
 import "../utils/DAEvidenceString.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 library DAEvidenceStorageLib {
+
+    using Strings for uint32;
+    using DAEvidenceString for string;
+    using DAEvidenceString for bytes32;
+    using DAEvidenceString for uint256;
+
     uint32 public constant USER_STATUS_ACTIVE = 100;
     uint32 public constant USER_STATUS_DISABLED = 500;
     /******************************************** 常量 **************************************************/
@@ -103,6 +110,13 @@ library DAEvidenceStorageLib {
         mapping(bytes32 => bytes32) _outerEidToInnerEid; // Hash(outerEid) = innerEid
 
         CommData commData; // 存放合约管理相关的数据信息
+    }
+
+    function genEidViaUrdi(string memory udri, string memory category) internal pure returns (bytes32 innerEid, string memory outerEidString) {
+        innerEid = keccak256(bytes(category.concat(udri)));
+        outerEidString = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_NEW.concat(
+            innerEid.toHexStringWithoutPrefix()
+        );
     }
 
     /*
@@ -215,22 +229,6 @@ library DAEvidenceStorageLib {
     // function _emitNewUser(DAEStorage storage sto, string memory bid, string memory usci) internal {
     //     emit UserCreated(msg.sender, bid, usci);
     // }
-
-    /* 添加用户角色 */
-    function _addUserRole(DAEStorage storage sto, string memory bid, string memory role) internal {
-        require(sto._usersV1[bid].timestamp != 0, "UserStorage: bid not exists");
-        UserInfoV1 storage user = sto._usersV1[bid];
-        user.role[keccak256(bytes(role))] = USER_STATUS_ACTIVE;
-    }
-
-    /* 移除用户角色 */
-    function _removeUserRole(DAEStorage storage sto, string memory bid, string memory role) internal {
-        require(sto._usersV1[bid].timestamp != 0, "UserStorage: bid not exists");
-        UserInfoV1 storage user = sto._usersV1[bid];
-        if (user.role[keccak256(bytes(role))] == USER_STATUS_ACTIVE) {
-            user.role[keccak256(bytes(role))] = USER_STATUS_DISABLED;
-        }
-    }
 
     // function _emitUserRoleChanged(DAEStorage storage sto, string memory bid) internal {
     //     emit UserRoleChanged(msg.sender, bid);
@@ -434,7 +432,214 @@ library DAEvidenceStorageLib {
     //     require((user.indefiniteString.get(USER_ROLE_PREFIX.concat(role).hash()).equal("exist")) == true, "User without corresponding role permissions.");
     // }
 
+    /******************************************** 用户 **************************************************/
+    function queryUserRole() internal pure returns (string[] memory) {
+        // return ["dataRightOwner", "reviewer", "registry", "platform"];
+        string[] memory roles = new string[](4);
+        roles[0] = DAEvidenceStorageLib.USER_ROLE_DATA_HOLDER;
+        roles[1] = DAEvidenceStorageLib.USER_ROLE_REVIEWER;
+        roles[2] = DAEvidenceStorageLib.USER_ROLE_REGISTRY;
+        roles[3] = DAEvidenceStorageLib.USER_ROLE_ELSE;
+        return roles;
+    }
+    /*
+    3.2 用户角色管理
+    3.2.1 添加用户
+    由用户管理员在链上添加用户信息，同时可以绑定用户角色。
+    */
+    function addUser(DAEStorage storage sto, string memory bid, string memory usci, string memory name,address account, string[] memory roles) internal{
+        require(_userExist(sto, bid) == false, "User already exist.");
+        // string memory bid, string memory usci, string memory name, address account
+        _storeUser(sto, bid, usci, name, account);
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        for(uint32 i = 0; i < roles.length; i++) {
+            user.indefiniteString.update(DAEvidenceStorageLib.USER_ROLE_PREFIX.concat(roles[i]).hash(), "exist");
+        }
+    }
 
+    /*
+    3.2.2  查询用户
+    根据用户bid查询当前用户信息及其绑定的角色。
+    */
+    function getUserRoles(DAEStorage storage sto, string memory bid) internal view returns(string memory usci, string memory name, string[] memory roles){
+        require(_userExist(sto, bid) == true, "User not exist.");
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        usci = user.usci;
+        name = user.name;
+        string[] memory supporedRoles = queryUserRole();
+        uint32 len = 0;
+        for(uint32 i = 0; i < supporedRoles.length; i++) {
+            if (user.indefiniteString.get(DAEvidenceStorageLib.USER_ROLE_PREFIX.concat(supporedRoles[i]).hash()).equal("exist")) {
+                len = len + 1;
+            }
+        }
+        if (len > 0) {
+            uint32 j = 0;
+            string[] memory rolesTmp = new string[](len);
+            for(uint32 i = 0; i < supporedRoles.length; i++) {
+                if (user.indefiniteString.get(DAEvidenceStorageLib.USER_ROLE_PREFIX.concat(supporedRoles[i]).hash()).equal("exist")) {
+                    // roles[j] = supporedRoles[i];
+                    rolesTmp[j] = supporedRoles[i];
+                    j = j + 1;
+                }
+            }
+            roles = rolesTmp;
+        }
+    }
+
+    /*
+    3.2.3 添加用户角色
+    为用户添加新的角色。
+    */
+    function grantUserRoles(DAEStorage storage sto, string memory bid, string[] memory roles) internal {
+        require(_userExist(sto, bid) == true, "User not exist.");
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        for(uint32 i = 0; i < roles.length; i++) {
+            user.indefiniteString.update(DAEvidenceStorageLib.USER_ROLE_PREFIX.concat(roles[i]).hash(), "exist");
+        }
+    }
+
+    /*
+    3.2.4 回收用户角色
+    由用户管理员回收用户的一或多个角色。
+    */
+    function revokeUserRoles(DAEStorage storage sto, string memory bid, string[] memory roles) internal {
+        require(_userExist(sto, bid) == true, "User not exist.");
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        for(uint32 i = 0; i < roles.length; i++) {
+            user.indefiniteString.update(DAEvidenceStorageLib.USER_ROLE_PREFIX.concat(roles[i]).hash(), "");
+        }
+    }
+
+    /* 4.3 登记存证（二阶段）*/
+
+    /* 5. 查询相关接口 */
+    /* 5.1  查询用户数据信息 */
+    /* 5.1.1 查询用户数据数量 */
+    function getDataCount(DAEStorage storage sto, string calldata bid) internal view returns (uint256 dataCount) {
+        require(_userExist(sto, bid) == true, "User already exist.");
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        dataCount = user.evidenceCount;
+    }
+
+    /* 5.1.2  查询用户数据列表 */
+    function getDataList(DAEStorage storage sto, string memory bid, uint256 start, uint256 count) internal view returns (string[] memory udriArray) {
+        require(_userExist(sto, bid) == true, "User already exist.");
+        require(count > 0, "count is invalid.");
+        DAEvidenceStorageLib.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        uint256 j = 0;
+        string[] memory udriArrayTmp = new string[](count);
+        for(uint256 i = start; i < start + count; i++) {
+            bytes32 key = DAEvidenceStorageLib.EVIDENCE_RIGHT_EID_WITH_INDEX.concat(i.toHexStringWithoutPrefix()).hash();
+            bytes32 innerEid = user.indefiniteBytes32.get(key);
+            udriArrayTmp[j] = _getCommEvidenceIndefiniteString(sto, innerEid, "udri");
+            j++;
+        }
+        udriArray = udriArrayTmp;
+    }
+
+
+    /******************************************** 审查存证 **************************************************/
+    /* 4.2 审查存证 */
+    /* 4.2.1 新增审查存证 */
+    function addReviewEvidence(DAEStorage storage sto, string memory udri,string memory reviewerBid, string[] memory reviewDataHash, string[] memory metaData, string[] memory variableData) internal {
+        // TODO: 检查该用户是否有审核角色
+        // _checkUserRole(DAEvidenceStorageLib.USER_ROLE_REVIEWER);
+        // TODO： 确保reviewDataHash没有被添加过
+        verifyBid(sto, reviewerBid);
+
+        // 确保udri对应的数据存证已经存在
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+
+        string memory str = DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW.concat(udri);
+        for (uint32 i = 0; i < reviewDataHash.length; i++) {
+            str = str.concat(reviewDataHash[i]);
+        }
+        bytes32 innerEid = keccak256(bytes(str)); //审核存证 内部eid
+
+        _storeCommEvidence(sto, innerEid, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW, metaData, variableData);
+        _setCommEvidenceIndefiniteString(sto, innerEid, "version", "EVIDENCE_CONTRACT_VERSION_V1");
+        _setCommEvidenceIndefiniteString(sto, innerEid, "udri", udri);
+        _setCommEvidenceIndefiniteString(sto, innerEid, "reviewerBid", reviewerBid);
+        _setCommEvidenceIndefiniteStringArray(sto, innerEid, "reviewDataHash", reviewDataHash);
+
+        // 审核数目信息需要 放到 确权存证 相关的数据中
+        string memory key = reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_COUNT); // 某个审查机构review数目
+        uint32 current_number = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, key);
+        _setCommEvidenceIndefiniteUint32(sto, rightInnerEid, key, current_number + 1);
+
+        _setCommEvidenceIndefiniteBytes32(sto, rightInnerEid, reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_INDEX).concat(current_number.toString()), innerEid);
+
+        // 该 udri 数据，所有审查机构的review的数目
+        current_number = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_COUNT);
+        _setCommEvidenceIndefiniteUint32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_COUNT, current_number + 1);
+        _setCommEvidenceIndefiniteBytes32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_INDEX.concat(current_number.toString()), innerEid);
+
+        _setVariableData(sto, innerEid, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW, variableData);
+
+        // Generate outerEid
+        string memory outerEid = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_REVIEW.concat(innerEid.toHexStringWithoutPrefix());
+        _bindOuterInnerEid(sto, keccak256(bytes(outerEid)), innerEid);
+        // _emitNewEvidence(outerEid);
+    }
+
+
+    /* 4.2.2 撤回审查存证 */
+    function withdrawReviewEvidence(DAEStorage storage sto, string memory udri, string memory reviewerBid) internal {
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+        // _checkUserRole(DAEvidenceStorageLib.USER_ROLE_REVIEWER);
+
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+
+        string memory reviewCountKey = reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_COUNT); // 某个审查机构review数目
+        uint32 current_number = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, reviewCountKey);
+        for (uint32 i = 0; i < current_number; i++) {
+            string memory key = reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_INDEX).concat(i.toString());
+            bytes32 innerEid = _getCommEvidenceIndefiniteBytes32(sto, rightInnerEid, key);
+            _setCommEvidenceIndefiniteString(sto, innerEid, "status", DAEvidenceStorageLib.EVIDENCE_STATUS_DISABLED);
+        }
+    }
+
+    /* 5.3  查询审查存证信息 */
+    /* 5.3.1 查询审查存证数量 */
+    function getReviewCount(DAEStorage storage sto, string calldata udri) internal view returns (uint256) {
+        // TODO: 修改文档那边，方法定义不一致
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        return _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_COUNT);
+    }
+
+    /* 5.3.2 查询审查存证信息 */
+    function getVerifyDAEvidence(DAEStorage storage sto, string calldata udri, uint32 index) internal view returns (string memory reviewerBid, string[] memory metaData, string[] memory variableData)  {
+        // TODO
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        bytes32 innerEid = _getCommEvidenceIndefiniteBytes32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_INDEX.concat(index.toString()));
+        reviewerBid = _getCommEvidenceIndefiniteString(sto, innerEid, "reviewerBid");
+        (
+            ,
+            ,
+            ,
+            string[] memory _metaData,
+            string[] memory _variableData
+        ) = _getCommEvidenceById(sto, innerEid);
+        metaData = _metaData;
+        variableData = _variableData;
+    }
+
+    // 获取某个审核机构对某个数据存证的 审核次数
+    function getReviewCountOfUser(DAEStorage storage sto, string calldata udri, string calldata reviewerBid) internal view returns (uint256) {
+        // TODO: 修改文档那边，方法定义不一致
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+ 
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        string memory key = reviewerBid.concat(":review_count="); // 某个审查机构review数目
+        return _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, key);
+    }
 
     /******************************************** 确权存证**************************************************/
     
@@ -556,10 +761,10 @@ library DAEvidenceStorageLib {
         _setVariableData(sto, innerEid, DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT, variableData);
 
         // Generate outerEid
-        // string memory outerEid = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_NEW.concat(
-        //     innerEid.toHexStringWithoutPrefix()
-        // );
-        // _bindOuterInnerEid(sto, keccak256(bytes(outerEid)), innerEid);
+        string memory outerEid = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_NEW.concat(
+            innerEid.toHexStringWithoutPrefix()
+        );
+        _bindOuterInnerEid(sto, keccak256(bytes(outerEid)), innerEid);
         // _emitNewEvidence(outerEid); // Do it out of this function
     }
 

@@ -97,12 +97,12 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x085e5b54f1d74c83eb090a43615dcfffc8cc38b7", client, committee);
+                            "0x5a4ffb8139fbad108bea3e63f5a687c16639595e", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0xa05de06bee6b6f2d58df33ded66dfb2a34f03200", client, committee);
+                            "0x889a490c9aaac9cc59cd5ef9e08787248df15eb7", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x758d22e50cac9b600e32c29f0c3e1f254f15f170", client, committee);
+                    DAEvProxy.load("0x4736cb5f080db0d99d4534f744cc7d4667e11737", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -150,18 +150,61 @@ public class DAEvTestSet {
                     };
             TransactionReceipt addUserReceipt =
                     xx_2.addUser("bid", "usci", "elton", strAccount, strArrRole);
-            // xx.addUser("bid", "usci", "elton", strAccount, strArrRole);
             System.out.println("addUser Tx status: " + addUserReceipt.isStatusOK());
             System.out.println("addUser TX hash: " + addUserReceipt.getTransactionHash());
 
             Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
-            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
             System.out.println("getResult 1: " + getResult.getValue1());
             System.out.println("getResult 2: " + getResult.getValue2());
             System.out.println("getResult 3: " + getResult.getValue3().size());
             for (int i = 0; i < getResult.getValue3().size(); i++) {
                 String element = getResult.getValue3().get(i);
                 System.out.println("getResult 3 Roles name: " + element);
+            }
+
+            System.out.println("---------------------------------------");
+            List<String> strGrantArrRole =
+                    new ArrayList<String>() {
+                        {
+                            add("registry");
+                        }
+                    };
+            TransactionReceipt grantUserRoleReceipt = xx_2.grantUserRoles("bid", strGrantArrRole);
+            System.out.println("grantUserRoles Tx status: " + grantUserRoleReceipt.isStatusOK());
+            System.out.println(
+                    "grantUserRoles TX hash: " + grantUserRoleReceipt.getTransactionHash());
+
+            Tuple3<String, String, List<String>> getGrantResult = xx_2.getUserRoles("bid");
+            System.out.println("after grantUserRoles getResult 1: " + getGrantResult.getValue1());
+            System.out.println("after grantUserRoles getResult 2: " + getGrantResult.getValue2());
+            System.out.println(
+                    "after grantUserRoles getResult 3: " + getGrantResult.getValue3().size());
+            for (int i = 0; i < getGrantResult.getValue3().size(); i++) {
+                String element = getGrantResult.getValue3().get(i);
+                System.out.println("after grantUserRoles getResult 3 Roles name: " + element);
+            }
+
+            System.out.println("---------------------------------------");
+            List<String> strRevokeArrRole =
+                    new ArrayList<String>() {
+                        {
+                            add("platform");
+                        }
+                    };
+            TransactionReceipt revokeUserRoleReceipt =
+                    xx_2.revokeUserRoles("bid", strRevokeArrRole);
+            System.out.println("revokeUserRoles Tx status: " + revokeUserRoleReceipt.isStatusOK());
+            System.out.println(
+                    "revokeUserRoles TX hash: " + revokeUserRoleReceipt.getTransactionHash());
+
+            Tuple3<String, String, List<String>> getRevokeResult = xx_2.getUserRoles("bid");
+            System.out.println("after revokeUserRoles getResult 1: " + getRevokeResult.getValue1());
+            System.out.println("after revokeUserRoles getResult 2: " + getRevokeResult.getValue2());
+            System.out.println(
+                    "after revokeUserRoles getResult 3: " + getRevokeResult.getValue3().size());
+            for (int i = 0; i < getRevokeResult.getValue3().size(); i++) {
+                String element = getRevokeResult.getValue3().get(i);
+                System.out.println("after revokeUserRoles getResult 3 Roles name: " + element);
             }
 
             System.out.println("---------------------------------------");
