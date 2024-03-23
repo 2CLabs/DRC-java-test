@@ -1,6 +1,7 @@
 package org.fisco.bcos.sdk.demo.contractTest;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,14 +96,14 @@ public class DAEvTestUpgrade {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0xf4b80476595d58dd2bf29b8af11e3757bb2fe641", client, committee);
+                            "0x51f0879017046b5ce7de59637f462a08004a7d80", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x2a34673816edb8ca4303e64f58b6202a72775385", client, committee);
+                            "0x74912199a652a56bf38f28da18d0013180778886", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0x2a6d54af48af4780657aa2cadc7e9a0b1df29253", client, committee);
+                    DAEvProxy.load("0x0e82c9484f095eb25ba415850d44f5d5f9d8c6cf", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
@@ -136,7 +137,7 @@ public class DAEvTestUpgrade {
             TransactionReceipt upgradeReceipt =
                     yy.upgrade(
                             strzzaddr,
-                            "0x087215ad07de3d859cb9e66f814b68ec79b1893a"); // 这个实际会调用 strzzaddr 的
+                            "0x04f66aeb867dba451aa7834e2657fbdd4718ebb5"); // 这个实际会调用 strzzaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
@@ -147,6 +148,32 @@ public class DAEvTestUpgrade {
             System.out.println("getResult after upgrade 1: " + getResult1.getValue1());
             System.out.println("getResult after upgrade 2: " + getResult1.getValue2());
             System.out.println("getResult after upgrade 3: " + getResult1.getValue3().size());
+
+            System.out.println("---------------------------------------");
+            List<String> strArrUserDataRight = new ArrayList<>();
+            strArrUserDataRight = xx_2.getUserDataRight("urd:001", "bid");
+            System.out.println("strArrUserDataRight: " + strArrUserDataRight.size());
+            for (int i = 0; i < strArrUserDataRight.size(); i++) {
+                String element = strArrUserDataRight.get(i);
+                System.out.println("strArrUserDataRight name: " + element);
+            }
+            System.out.println("---------------------------------------");
+            String strUdri =
+                    xx_2.getUdriByDatahash(
+                            "0xc24d340cca7669f4d8933635a0c09caa7d2ecfaba0b34053e32789168171e50a");
+            System.out.println("strUdri: " + strUdri);
+
+            BigInteger datacount = xx_2.getDataCount("bid");
+            System.out.println("datacount: " + datacount);
+
+            List<String> strArrDataList = new ArrayList<>();
+            strArrDataList = xx_2.getDataList("bid", new BigInteger("0"), new BigInteger("1"));
+            System.out.println("strArrDataList: " + strArrDataList.size());
+            for (int i = 0; i < strArrDataList.size(); i++) {
+                String element = strArrDataList.get(i);
+                System.out.println("strArrDataList name: " + element);
+            }
+            System.out.println("---------------------------------------");
 
             blockNumber = client.getBlockNumber();
             System.out.println("Current BlockNumber : " + blockNumber.getBlockNumber());

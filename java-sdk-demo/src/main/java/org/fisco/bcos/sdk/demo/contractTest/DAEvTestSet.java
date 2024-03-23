@@ -1,6 +1,7 @@
 package org.fisco.bcos.sdk.demo.contractTest;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,12 +98,12 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0xf4b80476595d58dd2bf29b8af11e3757bb2fe641", client, committee);
+                            "0x51f0879017046b5ce7de59637f462a08004a7d80", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x2a34673816edb8ca4303e64f58b6202a72775385", client, committee);
+                            "0x74912199a652a56bf38f28da18d0013180778886", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x2a6d54af48af4780657aa2cadc7e9a0b1df29253", client, committee);
+                    DAEvProxy.load("0x0e82c9484f095eb25ba415850d44f5d5f9d8c6cf", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -129,6 +130,8 @@ public class DAEvTestSet {
                     new ArrayList<String>() {
                         {
                             add("key_001");
+                            add("key_002");
+                            add("key_003");
                         }
                     };
 
@@ -290,6 +293,20 @@ public class DAEvTestSet {
                     "addDataRightEvidence TX hash: " + storeReceipt1.getTransactionHash());
 
             System.out.println("---------------------------------------");
+            List<String> strArrvariableDataNew =
+                    new ArrayList<String>() {
+                        {
+                            add("key_002");
+                            add("value_002");
+                        }
+                    };
+
+            TransactionReceipt storeReceipt2 =
+                    xx_2.appendVariableData("urd:001", strArrvariableDataNew);
+            System.out.println("appendVariableData Tx status: " + storeReceipt2.isStatusOK());
+            System.out.println("appendVariableData TX hash: " + storeReceipt2.getTransactionHash());
+            System.out.println("---------------------------------------");
+
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
                     xx_2.getRegisteredData("urd:001"); // 成功
             System.out.println("getRegisteredData result new 1: " + resultnew.getValue1());
@@ -298,6 +315,104 @@ public class DAEvTestSet {
             System.out.println("getRegisteredData result new 4: " + resultnew.getValue4());
             System.out.println("getRegisteredData result new 5: " + resultnew.getValue5());
             System.out.println("getRegisteredData result new 6: " + resultnew.getValue6());
+
+            System.out.println("---------------------------------------");
+            List<String> strArrUserDataRight = new ArrayList<>();
+            strArrUserDataRight = xx_2.getUserDataRight("urd:001", "bid");
+            System.out.println("strArrUserDataRight: " + strArrUserDataRight.size());
+            for (int i = 0; i < strArrUserDataRight.size(); i++) {
+                String element = strArrUserDataRight.get(i);
+                System.out.println("strArrUserDataRight name: " + element);
+            }
+            System.out.println("---------------------------------------");
+            List<String> strArrWithdrawDataRight =
+                    new ArrayList<String>() {
+                        {
+                            add("operate");
+                        }
+                    };
+            // TransactionReceipt withdrawDataRightReceipt =
+            // xx_2.withdrawDataRightRegister("urd:001","bid",strArrWithdrawDataRight);
+            TransactionReceipt withdrawDataRightReceipt =
+                    xx_2.withdrawDataRightRegister("urd:001", strArrWithdrawDataRight);
+            System.out.println(
+                    "withdrawDataRightReceipt Tx status: " + withdrawDataRightReceipt.isStatusOK());
+            System.out.println(
+                    "withdrawDataRightReceipt TX hash: "
+                            + withdrawDataRightReceipt.getTransactionHash());
+
+            List<String> strArrUserDataRightAfterWithdraw = new ArrayList<>();
+            strArrUserDataRightAfterWithdraw = xx_2.getUserDataRight("urd:001", "bid");
+            System.out.println(
+                    "strArrUserDataRightAfterWithdraw: " + strArrUserDataRightAfterWithdraw.size());
+            for (int i = 0; i < strArrUserDataRightAfterWithdraw.size(); i++) {
+                String element = strArrUserDataRightAfterWithdraw.get(i);
+                System.out.println("strArrUserDataRightAfterWithdraw name: " + element);
+            }
+            System.out.println("---------------------------------------");
+
+            List<String> strArrReviewDataHash =
+                    new ArrayList<String>() {
+                        {
+                            add(
+                                    "0x91bf7d8286ee249b32fdb77245988ae6a3162042b45b7afc762ba582870d6cd3");
+                            add(
+                                    "0xf9e60cc56c692aaf607336546d922d740a1115a68cf7cde0286594403ad96643");
+                        }
+                    };
+            List<String> strArrReviewMetaData =
+                    new ArrayList<String>() {
+                        {
+                            add("key_meata_data_003");
+                            add("key_meata_value_003");
+                        }
+                    };
+
+            List<String> strArrvReviewAriableData =
+                    new ArrayList<String>() {
+                        {
+                            add("key_003");
+                            add("value_003");
+                        }
+                    };
+
+            TransactionReceipt addReviewReceipt =
+                    xx_2.addReviewEvidence(
+                            "urd:001",
+                            "bid-reviewer",
+                            strArrReviewDataHash,
+                            strArrReviewMetaData,
+                            strArrvReviewAriableData);
+            System.out.println("addReviewEvidence Tx status: " + addReviewReceipt.isStatusOK());
+            System.out.println(
+                    "addReviewEvidence TX hash: " + addReviewReceipt.getTransactionHash());
+
+            System.out.println("---------------------------------------");
+
+            String strUdri =
+                    xx_2.getUdriByDatahash(
+                            "0xc24d340cca7669f4d8933635a0c09caa7d2ecfaba0b34053e32789168171e50a");
+            System.out.println("strUdri: " + strUdri);
+
+            BigInteger datacount = xx_2.getDataCount("bid");
+            System.out.println("datacount: " + datacount);
+
+            List<String> strArrDataList = new ArrayList<>();
+            strArrDataList = xx_2.getDataList("bid", new BigInteger("0"), new BigInteger("1"));
+            System.out.println("strArrDataList: " + strArrDataList.size());
+            for (int i = 0; i < strArrDataList.size(); i++) {
+                String element = strArrDataList.get(i);
+                System.out.println("strArrDataList name: " + element);
+            }
+
+            BigInteger reviewdatacount = xx_2.getReviewCount("urd:001");
+            System.out.println("reviewdatacount: " + reviewdatacount);
+
+            Tuple3<String, List<String>, List<String>> VerifyDataGetResult =
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+            System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
+            System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
+            System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
 
             System.out.println("---------------------------------------");
 
