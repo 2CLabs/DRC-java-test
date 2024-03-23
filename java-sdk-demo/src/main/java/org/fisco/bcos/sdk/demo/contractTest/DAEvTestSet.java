@@ -97,12 +97,12 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x5a4ffb8139fbad108bea3e63f5a687c16639595e", client, committee);
+                            "0xf4b80476595d58dd2bf29b8af11e3757bb2fe641", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x889a490c9aaac9cc59cd5ef9e08787248df15eb7", client, committee);
+                            "0x2a34673816edb8ca4303e64f58b6202a72775385", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x4736cb5f080db0d99d4534f744cc7d4667e11737", client, committee);
+                    DAEvProxy.load("0x2a6d54af48af4780657aa2cadc7e9a0b1df29253", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -110,6 +110,37 @@ public class DAEvTestSet {
 
             DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
 
+            List<String> strCategory =
+                    new ArrayList<String>() {
+                        {
+                            add("hold");
+                            add("process");
+                            add("operate");
+                        }
+                    };
+            TransactionReceipt addCategoryReceipt = xx_2.setDataRightCategory(strCategory);
+            System.out.println(
+                    "setDataRightCategory Tx status: " + addCategoryReceipt.isStatusOK());
+            System.out.println(
+                    "setDataRightCategory TX hash: " + addCategoryReceipt.getTransactionHash());
+
+            System.out.println("---------------------------------------");
+            List<String> strArrDataRightSupportVariableDataField =
+                    new ArrayList<String>() {
+                        {
+                            add("key_001");
+                        }
+                    };
+
+            TransactionReceipt setDataRightSupportReceipt =
+                    xx_2.setDataRightSupportVariableDataFields(
+                            "right", strArrDataRightSupportVariableDataField);
+            System.out.println(
+                    "setDataRightSupportVariableDataFields Tx status: "
+                            + setDataRightSupportReceipt.isStatusOK());
+            System.out.println(
+                    "setDataRightSupportVariableDataFields TX hash: "
+                            + setDataRightSupportReceipt.getTransactionHash());
             System.out.println("---------------------------------------");
 
             TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
@@ -208,42 +239,47 @@ public class DAEvTestSet {
             }
 
             System.out.println("---------------------------------------");
-            // String strChainName = xx_2.getChainName(); // 成功
-            // System.out.println("strChainName: " + strChainName);
-
             List<String> strArrDataHash =
                     new ArrayList<String>() {
                         {
                             add(
-                                    "0xf09bcbafc57fd3efde5c6c56bb5c47766a3de2a631d051556b4a25c0ae343e53");
+                                    "0xc24d340cca7669f4d8933635a0c09caa7d2ecfaba0b34053e32789168171e50a");
                             add(
-                                    "0xf2ec46c71939ff7a077ba23ee88778cda8ed8a1d83195d112094725234d5a3e6");
+                                    "0x23406f7824cf8012e6a6fef239f1bc2959254d30f1da84de2495fc96b20a9a6e");
                         }
                     };
             List<String> strArrDataRight =
                     new ArrayList<String>() {
                         {
-                            add("b");
-                            add("data_holder");
+                            add("hold");
+                            add("process");
+                            add("operate");
                         }
                     };
             List<String> strArrMetaData =
                     new ArrayList<String>() {
                         {
-                            add("c");
-                            add("cc");
+                            add("key_meata_data_001");
+                            add("key_meata_value_001");
                         }
                     };
+
             List<String> strArrvariableData =
                     new ArrayList<String>() {
                         {
-                            add("d");
-                            add("dd");
+                            add("key_001");
+                            add("value_001");
                         }
                     };
+
+            System.out.println("---------------------------------------");
+
+            // String strChainName = xx_2.getChainName(); // 成功
+            // System.out.println("strChainName: " + strChainName);
+
             TransactionReceipt storeReceipt1 =
                     xx_2.addDataRightEvidence(
-                            "4",
+                            "urd:001",
                             "bid",
                             strArrDataHash,
                             strArrDataRight,
@@ -255,13 +291,13 @@ public class DAEvTestSet {
 
             System.out.println("---------------------------------------");
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData("4"); // 成功
-            System.out.println("result new 1: " + resultnew.getValue1());
-            System.out.println("result new 2: " + resultnew.getValue2());
-            System.out.println("result new 3: " + resultnew.getValue3());
-            System.out.println("result new 4: " + resultnew.getValue4());
-            System.out.println("result new 5: " + resultnew.getValue5());
-            System.out.println("result new 6: " + resultnew.getValue6());
+                    xx_2.getRegisteredData("urd:001"); // 成功
+            System.out.println("getRegisteredData result new 1: " + resultnew.getValue1());
+            System.out.println("getRegisteredData result new 2: " + resultnew.getValue2());
+            System.out.println("getRegisteredData result new 3: " + resultnew.getValue3());
+            System.out.println("getRegisteredData result new 4: " + resultnew.getValue4());
+            System.out.println("getRegisteredData result new 5: " + resultnew.getValue5());
+            System.out.println("getRegisteredData result new 6: " + resultnew.getValue6());
 
             System.out.println("---------------------------------------");
 

@@ -754,6 +754,7 @@ library DAEvidenceStorageLib {
         // _setCommEvidenceIndefiniteStringArray(sto, innerEid, "dataRight", dataRight);
         _addDataRight(sto, innerEid, bid, dataRight);
 
+        _setUdriOnChain(sto, udri, innerEid);
         // 添加关联到user，这样可以遍历用户所有确权存证
         _addEvidenceInUser(sto, bid, DAEvidenceStorageLib.EVIDENCE_RIGHT_EID_WITH_INDEX.concat(user.evidenceCount.toHexStringWithoutPrefix()).hash(), innerEid);
 
@@ -908,7 +909,7 @@ library DAEvidenceStorageLib {
             uint32 j = 0;
             for (uint32 i = 0; i < rights.length; i++) {
                 if (_userWithDataRight(sto, innerEid, bid, rights[i]) == true) {
-                    outRights[j] = rights[i];
+                    outRightsTmp[j] = rights[i];
                     j += 1;
                 }
             }

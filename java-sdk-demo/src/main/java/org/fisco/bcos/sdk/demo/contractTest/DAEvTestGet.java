@@ -94,13 +94,13 @@ public class DAEvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
-            // DAEvidenceController.load("0x085e5b54f1d74c83eb090a43615dcfffc8cc38b7", client,
+            // DAEvidenceController.load("0xf4b80476595d58dd2bf29b8af11e3757bb2fe641", client,
             // committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0xa05de06bee6b6f2d58df33ded66dfb2a34f03200", client, committee);
+                            "0x2a34673816edb8ca4303e64f58b6202a72775385", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x758d22e50cac9b600e32c29f0c3e1f254f15f170", client, committee);
+                    DAEvProxy.load("0x2a6d54af48af4780657aa2cadc7e9a0b1df29253", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -130,7 +130,7 @@ public class DAEvTestGet {
 
             System.out.println("---------------------------------------");
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData("4"); // 成功
+                    xx_2.getRegisteredData("urd:001"); // 成功
             System.out.println("result new 1: " + resultnew.getValue1());
             System.out.println("result new 2: " + resultnew.getValue2());
             System.out.println("result new 3: " + resultnew.getValue3());
