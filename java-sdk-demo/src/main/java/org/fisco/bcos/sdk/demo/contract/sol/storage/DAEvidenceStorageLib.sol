@@ -312,38 +312,70 @@ library DAEvidenceStorageLib {
         for (uint32 i = 0; i < variableData.length; i += 2) {
             string memory key = variableData[i];
             string memory value = variableData[i + 1];
-            require(isSupportedInVariableDataFields(sto, category, key) == true, "part of variableData field is not allown");
+            require(isSupportedInVariableDataFields(sto, category, key) == true, "Part of variableData field is not allown");
             evidence.variableDataMap.update(keccak256(bytes(key)), value);
         }
     }
 
+    // 获取存证的 variableData 数据
+    function _getVariableData(DAEStorage storage sto, bytes32 innerEid, string memory category) internal view returns(string[] memory variableData) {
+        require(variableData.length % 2 == 0, "variableData length error");
+        DAEvidenceStorageLib.CommEvidence storage evidence = _getCommEvidence(sto, innerEid);
+        string[] memory variableDataFields = getSupportVariableDataFields(sto, category);
+
+        uint32 len = 0;
+        for(uint32 i = 0; i < variableDataFields.length; i++) {
+            string memory key = variableDataFields[i];
+            string memory value = evidence.variableDataMap.get(keccak256(bytes(key)));
+            if (bytes(value).length > 0) {
+                len++;
+            }
+        }
+
+        if (len > 0) {
+            uint32 j = 0;
+            string[] memory variableDataTmp = new string[](len * 2);
+            for(uint32 i = 0; i < variableDataFields.length; i++) {
+                string memory key = variableDataFields[i];
+                string memory value = evidence.variableDataMap.get(keccak256(bytes(key)));
+                if (bytes(value).length > 0) {
+                    variableDataTmp[j] = key;
+                    variableDataTmp[j + 1] = value;
+                    len++;
+                    j = j + 2;
+                }
+            }
+            variableData = variableDataTmp;
+        }
+    }
+
     // 获取当前某种存证支持的 variableData 字段
-    // function getSupportVariableDataFields(DAEStorage storage sto, string memory category) internal view returns (string[] memory) {
-    //     string memory keyStr = category.concat(":variable_data:supported_fileds=");
-    //     bytes32 key = keccak256(bytes(keyStr));
-    //     return sto.commData.byte32ToStringArrary.get(key);
-    // }
+    function getSupportVariableDataFields(DAEStorage storage sto, string memory category) internal view returns (string[] memory) {
+        string memory keyStr = category.concat(":variable_data:supported_fileds=");
+        bytes32 key = keccak256(bytes(keyStr));
+        return sto.commData.byte32ToStringArrary.get(key);
+    }
 
     // 设置某种存证 variableData 支持的字段，实现逻辑是：先将之前的所有fields都清除，再重新设置，原则上是只能在原有基础上新加字段，减少字段会导致之前保存的字段不能获取到
-    // function setDataRightSupportVariableDataFields(DAEStorage storage sto, string memory category, string[] memory fields) internal {
-    //     // TODO: 限制合约管理员可调用
-    //     // Clean current
-    //     string memory keyStr = category.concat(":variable_data:supported_fileds=");
-    //     bytes32 vbKey = keccak256(bytes(keyStr));
-    //     string[] memory variableDataFields = sto.commData.byte32ToStringArrary.get(vbKey);
-    //     for (uint32 i = 0; i < variableDataFields.length; i++) {
-    //         string memory vbFieldKeyStr = category.concat("variable_data:key=");
-    //         bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
-    //         sto.commData.byte32ToUint32.update(key, 0);
-    //     }
-    //     // Set
-    //     for (uint32 i = 0; i < fields.length; i++) {
-    //         string memory vbFieldKeyStr = category.concat("variable_data:key=");
-    //         bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
-    //         sto.commData.byte32ToUint32.update(key, 1);
-    //     }
-    //     sto.commData.byte32ToStringArrary.update(vbKey, variableDataFields);
-    // }
+    function setDataRightSupportVariableDataFields(DAEStorage storage sto, string memory category, string[] memory fields) internal {
+        // TODO: 限制合约管理员可调用
+        // Clean current
+        string memory keyStr = category.concat(":variable_data:supported_fileds=");
+        bytes32 vbKey = keccak256(bytes(keyStr));
+        string[] memory variableDataFields = sto.commData.byte32ToStringArrary.get(vbKey);
+        for (uint32 i = 0; i < variableDataFields.length; i++) {
+            string memory vbFieldKeyStr = category.concat(EVIDENCE_RIGHT_VARIABLE_DATA_MIDDLE);
+            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
+            sto.commData.byte32ToUint32.update(key, 0);
+        }
+        // Set
+        for (uint32 i = 0; i < fields.length; i++) {
+            string memory vbFieldKeyStr = category.concat(EVIDENCE_RIGHT_VARIABLE_DATA_MIDDLE);
+            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
+            sto.commData.byte32ToUint32.update(key, 1);
+        }
+        sto.commData.byte32ToStringArrary.update(vbKey, fields);
+    }
 
     // 数据权限管理--- 设置分类 TODO: 限制合约管理员可调用
     // function setDataRightCategory(DAEStorage storage sto, string[] memory fields) internal {
@@ -623,12 +655,12 @@ library DAEvidenceStorageLib {
         (
             ,
             ,
-            ,
+            string memory _category,
             string[] memory _metaData,
             string[] memory _variableData
         ) = _getCommEvidenceById(sto, innerEid);
         metaData = _metaData;
-        variableData = _variableData;
+        variableData = _getVariableData(sto, innerEid, _category);
     }
 
     // 获取某个审核机构对某个数据存证的 审核次数
@@ -877,7 +909,7 @@ library DAEvidenceStorageLib {
         (
             ,
             ,
-            ,
+            string memory _category,
             string[] memory _metaData,
             string[] memory _variableData
         ) = _getCommEvidenceById(sto, innerEid);
@@ -886,7 +918,7 @@ library DAEvidenceStorageLib {
         dataHashSHA = dataHash[1];
         dataRight = _getDataRight(sto, innerEid, bid);
         metadata = _metaData;
-        variabledata = _variableData;
+        variabledata = _getVariableData(sto, innerEid, _category);
     }
 
     /* 5.2.3 查询授权信息 */

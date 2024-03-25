@@ -96,14 +96,14 @@ public class DAEvTestUpgrade {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x51f0879017046b5ce7de59637f462a08004a7d80", client, committee);
+                            "0x684b52fe5f98a78d21bca0c7bf2adfb266dd53f0", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x74912199a652a56bf38f28da18d0013180778886", client, committee);
+                            "0xd38f7afe7680bb367cdf66d726976c177fc803f7", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0x0e82c9484f095eb25ba415850d44f5d5f9d8c6cf", client, committee);
+                    DAEvProxy.load("0x3ca7ebc2b82e91638be2062dcca93f03c0b7cd59", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
@@ -137,7 +137,7 @@ public class DAEvTestUpgrade {
             TransactionReceipt upgradeReceipt =
                     yy.upgrade(
                             strzzaddr,
-                            "0x04f66aeb867dba451aa7834e2657fbdd4718ebb5"); // 这个实际会调用 strzzaddr 的
+                            "0x9eb1bbd6fa12e90d5658106a377bc9be216498a7"); // 这个实际会调用 strzzaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());

@@ -98,12 +98,12 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             DAEvidenceController xx =
                     DAEvidenceController.load(
-                            "0x51f0879017046b5ce7de59637f462a08004a7d80", client, committee);
+                            "0x684b52fe5f98a78d21bca0c7bf2adfb266dd53f0", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0x74912199a652a56bf38f28da18d0013180778886", client, committee);
+                            "0xd38f7afe7680bb367cdf66d726976c177fc803f7", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x0e82c9484f095eb25ba415850d44f5d5f9d8c6cf", client, committee);
+                    DAEvProxy.load("0x3ca7ebc2b82e91638be2062dcca93f03c0b7cd59", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -144,6 +144,16 @@ public class DAEvTestSet {
             System.out.println(
                     "setDataRightSupportVariableDataFields TX hash: "
                             + setDataRightSupportReceipt.getTransactionHash());
+
+            TransactionReceipt setDataRightSupportReceipt2 =
+                    xx_2.setDataRightSupportVariableDataFields(
+                            "review", strArrDataRightSupportVariableDataField);
+            System.out.println(
+                    "setDataRightSupportVariableDataFields 2 Tx status: "
+                            + setDataRightSupportReceipt2.isStatusOK());
+            System.out.println(
+                    "setDataRightSupportVariableDataFields 2 TX hash: "
+                            + setDataRightSupportReceipt2.getTransactionHash());
             System.out.println("---------------------------------------");
 
             TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
@@ -256,7 +266,6 @@ public class DAEvTestSet {
                         {
                             add("hold");
                             add("process");
-                            add("operate");
                         }
                     };
             List<String> strArrMetaData =
@@ -324,17 +333,40 @@ public class DAEvTestSet {
                 String element = strArrUserDataRight.get(i);
                 System.out.println("strArrUserDataRight name: " + element);
             }
+
             System.out.println("---------------------------------------");
-            List<String> strArrWithdrawDataRight =
+            List<String> strArrGrantDataRight =
                     new ArrayList<String>() {
                         {
                             add("operate");
                         }
                     };
-            // TransactionReceipt withdrawDataRightReceipt =
-            // xx_2.withdrawDataRightRegister("urd:001","bid",strArrWithdrawDataRight);
+            TransactionReceipt grantDataRightReceipt =
+                    xx_2.grantUserDataRight("urd:001", "bid", strArrGrantDataRight);
+            System.out.println(
+                    "grantDataRightReceipt Tx status: " + grantDataRightReceipt.isStatusOK());
+            System.out.println(
+                    "grantDataRightReceipt TX hash: " + grantDataRightReceipt.getTransactionHash());
+
+            List<String> strArrUserDataRightAftergrant = new ArrayList<>();
+            strArrUserDataRightAftergrant = xx_2.getUserDataRight("urd:001", "bid");
+            System.out.println(
+                    "strArrUserDataRightAftergrant: " + strArrUserDataRightAftergrant.size());
+            for (int i = 0; i < strArrUserDataRightAftergrant.size(); i++) {
+                String element = strArrUserDataRightAftergrant.get(i);
+                System.out.println("strArrUserDataRightAftergrant name: " + element);
+            }
+
+            System.out.println("---------------withdrawUserDataRight-------------------");
+            List<String> strArrWithdrawDataRight =
+                    new ArrayList<String>() {
+                        {
+                            add("process");
+                        }
+                    };
+
             TransactionReceipt withdrawDataRightReceipt =
-                    xx_2.withdrawDataRightRegister("urd:001", strArrWithdrawDataRight);
+                    xx_2.withdrawUserDataRight("urd:001", "bid", strArrWithdrawDataRight);
             System.out.println(
                     "withdrawDataRightReceipt Tx status: " + withdrawDataRightReceipt.isStatusOK());
             System.out.println(
@@ -349,6 +381,36 @@ public class DAEvTestSet {
                 String element = strArrUserDataRightAfterWithdraw.get(i);
                 System.out.println("strArrUserDataRightAfterWithdraw name: " + element);
             }
+
+            System.out.println("---------------withdrawDataRightRegister-------------------");
+            List<String> strArrWithdrawDataRightRegister =
+                    new ArrayList<String>() {
+                        {
+                            add("hold");
+                            add("process");
+                            add("operate");
+                        }
+                    };
+
+            TransactionReceipt withdrawDataRightRegisterReceipt =
+                    xx_2.withdrawDataRightRegister("urd:001", strArrWithdrawDataRightRegister);
+            System.out.println(
+                    "withdrawDataRightRegister Tx status: "
+                            + withdrawDataRightRegisterReceipt.isStatusOK());
+            System.out.println(
+                    "withdrawDataRightRegister TX hash: "
+                            + withdrawDataRightRegisterReceipt.getTransactionHash());
+
+            List<String> strArrUserDataRightAfterWithdraw2 = new ArrayList<>();
+            strArrUserDataRightAfterWithdraw2 = xx_2.getUserDataRight("urd:001", "bid");
+            System.out.println(
+                    "strArrUserDataRightAfterWithdraw 2: "
+                            + strArrUserDataRightAfterWithdraw2.size());
+            for (int i = 0; i < strArrUserDataRightAfterWithdraw2.size(); i++) {
+                String element = strArrUserDataRightAfterWithdraw2.get(i);
+                System.out.println("strArrUserDataRightAfterWithdraw 2 name: " + element);
+            }
+
             System.out.println("---------------------------------------");
 
             List<String> strArrReviewDataHash =
@@ -379,7 +441,7 @@ public class DAEvTestSet {
             TransactionReceipt addReviewReceipt =
                     xx_2.addReviewEvidence(
                             "urd:001",
-                            "bid-reviewer",
+                            "bid",
                             strArrReviewDataHash,
                             strArrReviewMetaData,
                             strArrvReviewAriableData);

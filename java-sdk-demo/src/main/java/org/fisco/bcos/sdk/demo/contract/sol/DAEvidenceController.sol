@@ -87,29 +87,13 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
 
     // 获取当前某种存证支持的 variableData 字段
     function getSupportVariableDataFields(string memory category) public view returns (string[] memory fileds) {
-        string memory keyStr = category.concat(":variable_data:supported_fileds=");
-        bytes32 key = keccak256(bytes(keyStr));
-        return dataStorage.commData.byte32ToStringArrary.get(key);
+        return dataStorage.getSupportVariableDataFields(category);
     }
 
     // 设置某种存证 variableData 支持的字段，实现逻辑是：先将之前的所有fields都清除，再重新设置，原则上是只能在原有基础上新加字段，减少字段会导致之前保存的字段不能获取到
     function setDataRightSupportVariableDataFields(string memory category, string[] memory fields) public onlyRole(DEFAULT_ADMIN_ROLE) {
         // TODO: 可以设置成开关，支持验证或则不验证这些字段
-        // Clean current
-        string memory keyStr = category.concat(":variable_data:supported_fileds=");
-        bytes32 vbKey = keccak256(bytes(keyStr));
-        string[] memory variableDataFields = dataStorage.commData.byte32ToStringArrary.get(vbKey);
-        for (uint32 i = 0; i < variableDataFields.length; i++) {
-            string memory vbFieldKeyStr = category.concat("variable_data:key=");
-            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
-            dataStorage.commData.byte32ToUint32.update(key, 0);
-        }
-        // Set
-        for (uint32 i = 0; i < fields.length; i++) {
-            string memory vbFieldKeyStr = category.concat("variable_data:key=");
-            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
-            dataStorage.commData.byte32ToUint32.update(key, 1);
-        }
+        dataStorage.setDataRightSupportVariableDataFields(category, fields);
     }
 
     // 数据权限管理--- 设置分类
