@@ -6,12 +6,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
-import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
 import org.fisco.bcos.sdk.demo.contract.DAEvidenceController;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -96,14 +96,14 @@ public class DAEvTestSet {
             String strAccount = committee.getAddress();
             System.out.println("Account: " + strAccount);
             client.getCryptoSuite().setCryptoKeyPair(committee);
-            DAEvidenceController xx =
-                    DAEvidenceController.load(
-                            "0x684b52fe5f98a78d21bca0c7bf2adfb266dd53f0", client, committee);
-            DAEvProxyAdmin yy =
-                    DAEvProxyAdmin.load(
-                            "0xd38f7afe7680bb367cdf66d726976c177fc803f7", client, committee);
+            // DAEvidenceController xx =
+            //        DAEvidenceController.load(
+            //                "0x816bc90e1d8801d35bf4c5ada3e93d1769ee32a4", client, committee);
+            // DAEvProxyAdmin yy =
+            //        DAEvProxyAdmin.load(
+            //                "0xa86ec4bc12d9cb96c1f9feadd31a17ea5f2765fb", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x3ca7ebc2b82e91638be2062dcca93f03c0b7cd59", client, committee);
+                    DAEvProxy.load("0x27e94f7f7beb35e5a193a074de91fc6c26dee709", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -286,9 +286,6 @@ public class DAEvTestSet {
 
             System.out.println("---------------------------------------");
 
-            // String strChainName = xx_2.getChainName(); // 成功
-            // System.out.println("strChainName: " + strChainName);
-
             TransactionReceipt storeReceipt1 =
                     xx_2.addDataRightEvidence(
                             "urd:001",
@@ -387,7 +384,6 @@ public class DAEvTestSet {
                     new ArrayList<String>() {
                         {
                             add("hold");
-                            add("process");
                             add("operate");
                         }
                     };
@@ -470,11 +466,37 @@ public class DAEvTestSet {
             BigInteger reviewdatacount = xx_2.getReviewCount("urd:001");
             System.out.println("reviewdatacount: " + reviewdatacount);
 
-            Tuple3<String, List<String>, List<String>> VerifyDataGetResult =
+            Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
                     xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
+            System.out.println("VerifyDataGetResult 4: " + VerifyDataGetResult.getValue4());
+
+            System.out.println("---------------------------------------");
+
+            TransactionReceipt withdrawReviewReceipt =
+                    xx_2.withdrawReviewEvidence("urd:001", "bid");
+            System.out.println(
+                    "withdrawReviewEvidence Tx status: " + withdrawReviewReceipt.isStatusOK());
+            System.out.println(
+                    "withdrawReviewEvidence TX hash: "
+                            + withdrawReviewReceipt.getTransactionHash());
+
+            Tuple4<Boolean, String, List<String>, List<String>> VerifyDataAfterWithdrawGetResult =
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+            System.out.println(
+                    "VerifyDataAfterWithdrawGetResult 1: "
+                            + VerifyDataAfterWithdrawGetResult.getValue1());
+            System.out.println(
+                    "VerifyDataAfterWithdrawGetResult 2: "
+                            + VerifyDataAfterWithdrawGetResult.getValue2());
+            System.out.println(
+                    "VerifyDataAfterWithdrawGetResult 3: "
+                            + VerifyDataAfterWithdrawGetResult.getValue3());
+            System.out.println(
+                    "VerifyDataAfterWithdrawGetResult 4: "
+                            + VerifyDataAfterWithdrawGetResult.getValue4());
 
             System.out.println("---------------------------------------");
 

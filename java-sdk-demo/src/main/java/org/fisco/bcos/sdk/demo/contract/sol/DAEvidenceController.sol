@@ -115,8 +115,18 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
         dataStorage.commData.byte32ToStringArrary.update(vbKey, fields);
     }
 
-    // 检查sender是 存证 owner
-    function _requireDataRightEvidenceOwnerByUrid(string memory udri) internal view{
+    // 数据权限管理--- 获取分类
+    function getDataRightCategory() public view returns(string[] memory fields) {
+        return dataStorage.getDataRightCategory();
+    }
+
+    function _hasDAUserManageRole() internal view returns(bool) {
+        (bool isExist, string memory bid) = dataStorage._getUserBidByAccount(msg.sender);
+        require(isExist == true, "Sender is not registered.");
+        return hasDAUserManageRole(bid);
+    }
+
+    function _isDataRightEvidenceOwner(string memory udri) internal view returns(bool) {
         bytes32 innerEid = keccak256(
             bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))
         );
@@ -128,7 +138,12 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
 
         string memory bidInEvidence = dataStorage._getCommEvidenceIndefiniteString(innerEid, "bid");
 
-        require(bid.equal(bidInEvidence) == true, "Sender is not evidence owner.");
+        return bid.equal(bidInEvidence);
+    }
+
+    // 检查sender是 存证 owner
+    function _requireDataRightEvidenceOwnerByUrid(string memory udri) internal view{
+        require(_isDataRightEvidenceOwner(udri) == true, "Sender is not evidence owner.");
     }
 
     // 检查sender是否是某个角色
@@ -239,7 +254,8 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     }
 
     /* 5.3.2 查询审查存证信息 */
-    function getVerifyDAEvidence(string calldata udri, uint32 index) public view returns (string memory reviewerBid, string[] memory metaData, string[] memory variableData)  {
+    function getVerifyDAEvidence(string calldata udri, uint32 index) public view returns (bool isWithdraw, string memory reviewerBid, string[] memory metaData, string[] memory variableData)  {
+        // TODO: 添加了isWithdraw 需要在文档中也修改
         return dataStorage.getVerifyDAEvidence(udri, index);
     }
 
@@ -282,7 +298,9 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
         /*string memory dataRightOwnerBid, */
         string[] memory dataRight
     ) public {
+        // TODO: 接口和文档中不一致，需要确认是否修改成代码这边这种方式。
         _checkUserRole(DAEvidenceStorageLib.USER_ROLE_DATA_HOLDER);
+        require(_isDataRightEvidenceOwner(udri)== true || _hasDAUserManageRole() == true, "Sender neither the owner nor the authority.");
         _requireDataRightEvidenceOwnerByUrid(udri);
         dataStorage.withdrawDataRightRegister(udri, dataRight);
     }

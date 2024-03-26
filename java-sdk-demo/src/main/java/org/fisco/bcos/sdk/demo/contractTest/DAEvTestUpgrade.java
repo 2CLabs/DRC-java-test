@@ -12,6 +12,7 @@ import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.ConstantConfig;
@@ -94,16 +95,16 @@ public class DAEvTestUpgrade {
             CryptoKeyPair committee = cryptoSuite.getCryptoKeyPair();
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
-            DAEvidenceController xx =
-                    DAEvidenceController.load(
-                            "0x684b52fe5f98a78d21bca0c7bf2adfb266dd53f0", client, committee);
+            // DAEvidenceController xx =
+            //        DAEvidenceController.load(
+            //                "0x816bc90e1d8801d35bf4c5ada3e93d1769ee32a4", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0xd38f7afe7680bb367cdf66d726976c177fc803f7", client, committee);
+                            "0xa86ec4bc12d9cb96c1f9feadd31a17ea5f2765fb", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0x3ca7ebc2b82e91638be2062dcca93f03c0b7cd59", client, committee);
+                    DAEvProxy.load("0x27e94f7f7beb35e5a193a074de91fc6c26dee709", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
@@ -137,7 +138,7 @@ public class DAEvTestUpgrade {
             TransactionReceipt upgradeReceipt =
                     yy.upgrade(
                             strzzaddr,
-                            "0x9eb1bbd6fa12e90d5658106a377bc9be216498a7"); // 这个实际会调用 strzzaddr 的
+                            "0x987daf61a4d86a85d55613ba43cd97b5d587d172"); // 这个实际会调用 strzzaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
@@ -173,6 +174,17 @@ public class DAEvTestUpgrade {
                 String element = strArrDataList.get(i);
                 System.out.println("strArrDataList name: " + element);
             }
+
+            BigInteger reviewdatacount = xx_2.getReviewCount("urd:001");
+            System.out.println("reviewdatacount: " + reviewdatacount);
+
+            Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+            System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
+            System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
+            System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
+            System.out.println("VerifyDataGetResult 4: " + VerifyDataGetResult.getValue4());
+
             System.out.println("---------------------------------------");
 
             blockNumber = client.getBlockNumber();

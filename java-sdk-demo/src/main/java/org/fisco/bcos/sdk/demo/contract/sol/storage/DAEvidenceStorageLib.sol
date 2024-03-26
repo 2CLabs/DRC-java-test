@@ -136,23 +136,23 @@ library DAEvidenceStorageLib {
     }
 
     function _setCommEvidenceIndefiniteStringArray(DAEStorage storage sto, bytes32 innerEid, string memory key, string[] memory value) internal {
-        sto._commEvidences[innerEid].indefiniteStringArray.add(keccak256(bytes(key)), value);
+        sto._commEvidences[innerEid].indefiniteStringArray.update(keccak256(bytes(key)), value);
     }
 
     function _setCommEvidenceIndefiniteString(DAEStorage storage sto, bytes32 innerEid, string memory key, string memory value) internal {
-        sto._commEvidences[innerEid].indefiniteString.add(keccak256(bytes(key)), value);
+        sto._commEvidences[innerEid].indefiniteString.update(keccak256(bytes(key)), value);
     }
 
     function _setCommEvidencevariableData(DAEStorage storage sto, bytes32 innerEid, string memory key, string memory value) internal {
-        sto._commEvidences[innerEid].variableDataMap.add(keccak256(bytes(key)), value);
+        sto._commEvidences[innerEid].variableDataMap.update(keccak256(bytes(key)), value);
     }
 
     function _setCommEvidenceIndefiniteUint32(DAEStorage storage sto, bytes32 innerEid, string memory key, uint32 value) internal {
-        sto._commEvidences[innerEid].indefiniteUint32.add(keccak256(bytes(key)), value);
+        sto._commEvidences[innerEid].indefiniteUint32.update(keccak256(bytes(key)), value);
     }
 
     function _setCommEvidenceIndefiniteBytes32(DAEStorage storage sto, bytes32 innerEid, string memory key, bytes32 value) internal {
-        sto._commEvidences[innerEid].indefiniteBytes32.add(keccak256(bytes(key)), value);
+        sto._commEvidences[innerEid].indefiniteBytes32.update(keccak256(bytes(key)), value);
     }
 
     // function _emitNewEvidence(DAEStorage storage sto, string memory outerEid) internal {
@@ -365,7 +365,7 @@ library DAEvidenceStorageLib {
         string[] memory variableDataFields = sto.commData.byte32ToStringArrary.get(vbKey);
         for (uint32 i = 0; i < variableDataFields.length; i++) {
             string memory vbFieldKeyStr = category.concat(EVIDENCE_RIGHT_VARIABLE_DATA_MIDDLE);
-            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(fields[i])));
+            bytes32 key = keccak256(bytes(vbFieldKeyStr.concat(variableDataFields[i])));
             sto.commData.byte32ToUint32.update(key, 0);
         }
         // Set
@@ -441,6 +441,28 @@ library DAEvidenceStorageLib {
         for (uint32 i = 0; i < dataHash.length; i++) {
             sto.commData.byte32ToBytes32.update(keccak256(bytes(dataHash[i])), innerEid);
         }
+    }
+
+    function _withAnyRightInDataRightEvidence(DAEStorage storage sto, bytes32 innerEid, string memory bid) internal view returns(bool) {
+        string[] memory rights = getDataRightCategory(sto);
+        uint32 len = 0;
+        for (uint32 i = 0; i < rights.length; i++) {
+            if (_userWithDataRight(sto, innerEid, bid, rights[i]) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function _withRightInDataRightEvidence(DAEStorage storage sto, bytes32 innerEid, string memory bid, string memory right) internal view returns(bool) {
+        string[] memory rights = getDataRightCategory(sto);
+        uint32 len = 0;
+        for (uint32 i = 0; i < rights.length; i++) {
+            if (_userWithDataRight(sto, innerEid, bid, rights[i]) == true) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 检查sender是 存证 owner
@@ -623,6 +645,7 @@ library DAEvidenceStorageLib {
         require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
         // _checkUserRole(DAEvidenceStorageLib.USER_ROLE_REVIEWER);
 
+        // TODO: 确认是否有必要传入reviewerBid，应为这样会出现reviewer 传入其他人的 bid，去撤销他人的bid，
         bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
 
         string memory reviewCountKey = reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_COUNT); // 某个审查机构review数目
@@ -645,7 +668,7 @@ library DAEvidenceStorageLib {
     }
 
     /* 5.3.2 查询审查存证信息 */
-    function getVerifyDAEvidence(DAEStorage storage sto, string calldata udri, uint32 index) internal view returns (string memory reviewerBid, string[] memory metaData, string[] memory variableData)  {
+    function getVerifyDAEvidence(DAEStorage storage sto, string calldata udri, uint32 index) internal view returns (bool isWithdraw, string memory reviewerBid, string[] memory metaData, string[] memory variableData)  {
         // TODO
         require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
 
@@ -659,6 +682,8 @@ library DAEvidenceStorageLib {
             string[] memory _metaData,
             string[] memory _variableData
         ) = _getCommEvidenceById(sto, innerEid);
+        string memory status = _getCommEvidenceIndefiniteString(sto, innerEid, "status");
+        isWithdraw = status.equal(DAEvidenceStorageLib.EVIDENCE_STATUS_DISABLED);
         metaData = _metaData;
         variableData = _getVariableData(sto, innerEid, _category);
     }
@@ -686,14 +711,17 @@ library DAEvidenceStorageLib {
             string memory key = prefix.concat(bid).concat(dataRight[i]);
             _setCommEvidenceIndefiniteString(sto, innerEid, key, "exist");
         }
-        _setCommEvidenceIndefiniteStringArray(
-            sto,
-            innerEid,
-            prefix.concat(bid),
-            dataRight
-        );
+
+        // 不使用StringArray类型存放 dataRight. (2024-03-25)
+        // _setCommEvidenceIndefiniteStringArray(
+        //     sto,
+        //     innerEid,
+        //     prefix.concat(bid),
+        //     dataRight
+        // );
     }
 
+    // 不使用StringArray类型存放 dataRight. (2024-03-25)
     function _getDataRight(DAEStorage storage sto, bytes32 innerEid, string memory bid)
         internal
         view
@@ -785,6 +813,7 @@ library DAEvidenceStorageLib {
 
         // _setCommEvidenceIndefiniteStringArray(sto, innerEid, "dataRight", dataRight);
         _addDataRight(sto, innerEid, bid, dataRight);
+        require(_userWithDataRight(sto, innerEid, bid, "hold") == true, "The data right [hold] is required.");
 
         _setUdriOnChain(sto, udri, innerEid);
         // 添加关联到user，这样可以遍历用户所有确权存证
@@ -900,11 +929,12 @@ library DAEvidenceStorageLib {
             innerEid,
             "dataHash"
         );
-        isWithdraw =
-            keccak256(
-                bytes(_getCommEvidenceIndefiniteString(sto, innerEid, "status"))
-            ) !=
-            keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_STATUS_ACTIVE));
+        // isWithdraw =
+        //     keccak256(
+        //         bytes(_getCommEvidenceIndefiniteString(sto, innerEid, "status"))
+        //     ) !=
+        //     keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_STATUS_ACTIVE));
+        isWithdraw = _withAnyRightInDataRightEvidence(sto, innerEid, bid) == false;
 
         (
             ,
@@ -916,7 +946,7 @@ library DAEvidenceStorageLib {
 
         dataHashSM = dataHash[0];
         dataHashSHA = dataHash[1];
-        dataRight = _getDataRight(sto, innerEid, bid);
+        dataRight = getUserDataRight(sto, udri, bid);
         metadata = _metaData;
         variabledata = _getVariableData(sto, innerEid, _category);
     }
