@@ -95,13 +95,13 @@ public class DAEvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
-            // DAEvidenceController.load("0x816bc90e1d8801d35bf4c5ada3e93d1769ee32a4", client,
+            // DAEvidenceController.load("0x3a78308cb9cee97c4e7e9787fbf3f17aaeb5146a", client,
             // committee);
             // DAEvProxyAdmin yy =
             //        DAEvProxyAdmin.load(
-            //                "0xa86ec4bc12d9cb96c1f9feadd31a17ea5f2765fb", client, committee);
+            //                "0xe61527fd650cc74946c1001f4c3f40528d97b10b", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x27e94f7f7beb35e5a193a074de91fc6c26dee709", client, committee);
+                    DAEvProxy.load("0x6c8d6b16458486820e05cca7caadca946e2fbadc", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
@@ -169,7 +169,7 @@ public class DAEvTestGet {
             System.out.println("reviewdatacount: " + reviewdatacount);
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("1"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());

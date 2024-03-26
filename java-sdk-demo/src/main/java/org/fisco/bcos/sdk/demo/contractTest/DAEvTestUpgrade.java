@@ -97,14 +97,14 @@ public class DAEvTestUpgrade {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
             //        DAEvidenceController.load(
-            //                "0x816bc90e1d8801d35bf4c5ada3e93d1769ee32a4", client, committee);
+            //                "0x3a78308cb9cee97c4e7e9787fbf3f17aaeb5146a", client, committee);
             DAEvProxyAdmin yy =
                     DAEvProxyAdmin.load(
-                            "0xa86ec4bc12d9cb96c1f9feadd31a17ea5f2765fb", client, committee);
+                            "0xe61527fd650cc74946c1001f4c3f40528d97b10b", client, committee);
             String stryyaddr = yy.getContractAddress();
             System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
             DAEvProxy zz =
-                    DAEvProxy.load("0x27e94f7f7beb35e5a193a074de91fc6c26dee709", client, committee);
+                    DAEvProxy.load("0x6c8d6b16458486820e05cca7caadca946e2fbadc", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
@@ -138,7 +138,7 @@ public class DAEvTestUpgrade {
             TransactionReceipt upgradeReceipt =
                     yy.upgrade(
                             strzzaddr,
-                            "0x987daf61a4d86a85d55613ba43cd97b5d587d172"); // 这个实际会调用 strzzaddr 的
+                            "0xd417f18e4f97783ef4473b699651bdef419288e5"); // 这个实际会调用 strzzaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
@@ -179,7 +179,7 @@ public class DAEvTestUpgrade {
             System.out.println("reviewdatacount: " + reviewdatacount);
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("1"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());

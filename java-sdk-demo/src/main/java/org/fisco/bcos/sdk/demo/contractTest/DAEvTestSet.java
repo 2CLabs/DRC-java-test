@@ -98,18 +98,19 @@ public class DAEvTestSet {
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
             //        DAEvidenceController.load(
-            //                "0x816bc90e1d8801d35bf4c5ada3e93d1769ee32a4", client, committee);
+            //                "0x3a78308cb9cee97c4e7e9787fbf3f17aaeb5146a", client, committee);
             // DAEvProxyAdmin yy =
             //        DAEvProxyAdmin.load(
-            //                "0xa86ec4bc12d9cb96c1f9feadd31a17ea5f2765fb", client, committee);
+            //                "0xe61527fd650cc74946c1001f4c3f40528d97b10b", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x27e94f7f7beb35e5a193a074de91fc6c26dee709", client, committee);
+                    DAEvProxy.load("0x6c8d6b16458486820e05cca7caadca946e2fbadc", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?
             // System.out.println("Logic contract address: " + strlogicaddr);
 
             DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
+            System.out.println("---------------------------------------");
 
             List<String> strCategory =
                     new ArrayList<String>() {
@@ -129,9 +130,8 @@ public class DAEvTestSet {
             List<String> strArrDataRightSupportVariableDataField =
                     new ArrayList<String>() {
                         {
-                            add("key_001");
-                            add("key_002");
-                            add("key_003");
+                            add("extendDataHash");
+                            add("extendDataUrl");
                         }
                     };
 
@@ -279,7 +279,7 @@ public class DAEvTestSet {
             List<String> strArrvariableData =
                     new ArrayList<String>() {
                         {
-                            add("key_001");
+                            add("extendDataHash");
                             add("value_001");
                         }
                     };
@@ -302,7 +302,7 @@ public class DAEvTestSet {
             List<String> strArrvariableDataNew =
                     new ArrayList<String>() {
                         {
-                            add("key_002");
+                            add("extendDataUrl");
                             add("value_002");
                         }
                     };
@@ -418,6 +418,24 @@ public class DAEvTestSet {
                                     "0xf9e60cc56c692aaf607336546d922d740a1115a68cf7cde0286594403ad96643");
                         }
                     };
+            List<String> strArrReviewDataHash2 =
+                    new ArrayList<String>() {
+                        {
+                            add(
+                                    "0x11bf7d8286ee249b32fdb77245988ae6a3162042b45b7afc762ba582870d6cd3");
+                            add(
+                                    "0x19e60cc56c692aaf607336546d922d740a1115a68cf7cde0286594403ad96643");
+                        }
+                    };
+            List<String> strArrReviewDataHash3 =
+                    new ArrayList<String>() {
+                        {
+                            add(
+                                    "0x12bf7d8286ee249b32fdb77245988ae6a3162042b45b7afc762ba582870d6cd3");
+                            add(
+                                    "0x12e60cc56c692aaf607336546d922d740a1115a68cf7cde0286594403ad96643");
+                        }
+                    };
             List<String> strArrReviewMetaData =
                     new ArrayList<String>() {
                         {
@@ -429,8 +447,13 @@ public class DAEvTestSet {
             List<String> strArrvReviewAriableData =
                     new ArrayList<String>() {
                         {
-                            add("key_003");
+                            add("extendDataHash");
                             add("value_003");
+                        }
+                    };
+            List<String> strArrvNullAriableData =
+                    new ArrayList<String>() {
+                        {
                         }
                     };
 
@@ -444,6 +467,27 @@ public class DAEvTestSet {
             System.out.println("addReviewEvidence Tx status: " + addReviewReceipt.isStatusOK());
             System.out.println(
                     "addReviewEvidence TX hash: " + addReviewReceipt.getTransactionHash());
+            TransactionReceipt addReviewReceipt2 =
+                    xx_2.addReviewEvidence(
+                            "urd:001",
+                            "bid",
+                            strArrReviewDataHash2,
+                            strArrReviewMetaData,
+                            strArrvReviewAriableData);
+            System.out.println("addReviewEvidence 2 Tx status: " + addReviewReceipt2.isStatusOK());
+            System.out.println(
+                    "addReviewEvidence 2 TX hash: " + addReviewReceipt2.getTransactionHash());
+
+            TransactionReceipt addReviewReceipt3 =
+                    xx_2.addReviewEvidence(
+                            "urd:001",
+                            "bid",
+                            strArrReviewDataHash3,
+                            strArrReviewMetaData,
+                            strArrvNullAriableData);
+            System.out.println("addReviewEvidence 3 Tx status: " + addReviewReceipt3.isStatusOK());
+            System.out.println(
+                    "addReviewEvidence 3 TX hash: " + addReviewReceipt3.getTransactionHash());
 
             System.out.println("---------------------------------------");
 
@@ -467,7 +511,7 @@ public class DAEvTestSet {
             System.out.println("reviewdatacount: " + reviewdatacount);
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("2"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
@@ -484,7 +528,7 @@ public class DAEvTestSet {
                             + withdrawReviewReceipt.getTransactionHash());
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataAfterWithdrawGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("0"));
+                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("2"));
             System.out.println(
                     "VerifyDataAfterWithdrawGetResult 1: "
                             + VerifyDataAfterWithdrawGetResult.getValue1());
