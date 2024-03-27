@@ -95,13 +95,13 @@ public class DAEvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
             // DAEvidenceController xx =
-            // DAEvidenceController.load("0x3a78308cb9cee97c4e7e9787fbf3f17aaeb5146a", client,
+            // DAEvidenceController.load("0x293f95b4158864b60d924eef4025da5ce9be1817", client,
             // committee);
             // DAEvProxyAdmin yy =
             //        DAEvProxyAdmin.load(
-            //                "0xe61527fd650cc74946c1001f4c3f40528d97b10b", client, committee);
+            //                "0x36bb9734a62b50c662c9909b1d603e2a2730128e", client, committee);
             DAEvProxy zz =
-                    DAEvProxy.load("0x6c8d6b16458486820e05cca7caadca946e2fbadc", client, committee);
+                    DAEvProxy.load("0xdebaebec5aafe8f7527279805513c4b9a2964650", client, committee);
             String strzzaddr = zz.getContractAddress();
             System.out.println("Load DAEvProxy finish: " + strzzaddr);
             // String strlogicaddr = yy.getProxyImplementation(strzzaddr); //error report , why ?

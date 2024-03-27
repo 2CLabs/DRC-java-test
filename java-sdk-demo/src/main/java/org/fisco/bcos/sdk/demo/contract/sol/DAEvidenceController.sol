@@ -96,7 +96,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
         dataStorage.setDataRightSupportVariableDataFields(category, fields);
     }
 
-    // 数据权限管理--- 设置分类
+    // 数据权限管理--- 设置分类 （1.数据资源持有权; 2.数据加工使用权; 3.数据产品经营权。）
     function setDataRightCategory(string[] memory fields) public onlyRole(DEFAULT_ADMIN_ROLE) {
         // Clean current
         bytes32 vbKey = keccak256(bytes("data_right_category:"));
@@ -190,6 +190,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     */
     function addUser(string memory bid, string memory usci, string memory name,address account, string[] memory roles) public onlyRole(USERMANAGE_ROLE) {
         dataStorage.addUser(bid, usci, name, account, roles);
+        _emitNewUser(bid, usci);
     }
 
     /*
@@ -206,6 +207,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     */
     function grantUserRoles(string memory bid, string[] memory roles) public onlyRole(USERMANAGE_ROLE) {
         dataStorage.grantUserRoles(bid, roles);
+        _emitUserRoleChanged(bid);
     }
 
     /*
@@ -214,6 +216,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     */
     function revokeUserRoles(string memory bid, string[] memory roles) public onlyRole(USERMANAGE_ROLE) {
         dataStorage.revokeUserRoles(bid, roles);
+        _emitUserRoleChanged(bid);
     }
 
     /* 4.3 登记存证（二阶段）*/
@@ -221,7 +224,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     /* 5. 查询相关接口 */
     /* 5.1  查询用户数据信息 */
     /* 5.1.1 查询用户数据数量 */
-    function getDataCount(string calldata bid) public view returns (uint256 count) {
+    function getDataCount(string calldata bid) public view returns (uint256 dataCount) {
         return dataStorage.getDataCount(bid);
     }
 
@@ -236,8 +239,10 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     function addReviewEvidence(string memory udri, string memory reviewerBid, string[] memory reviewDataHash, string[] memory metaData, string[] memory variableData) public {
         _checkUserRole(DAEvidenceStorageLib.USER_ROLE_REVIEWER);
         dataStorage.addReviewEvidence(udri, reviewerBid, reviewDataHash, metaData, variableData);
-        (, string memory outerEid) = DAEvidenceStorageLib.genEidViaUrdi(udri, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW);
-        _emitNewEvidence(outerEid);
+        // (, string memory outerEid) = DAEvidenceStorageLib.genEidViaUrdi(udri, _chainName, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW);
+        uint32 count = dataStorage.getEvidenceReviewCount(udri);
+        // _emitNewRightEvidence(outerEid);
+        _emitNewReviewEvidence(udri, count - 1);
     }
 
     /* 4.2.2 撤回审查存证 */
@@ -248,7 +253,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
 
     /* 5.3  查询审查存证信息 */
     /* 5.3.1 查询审查存证数量 */
-    function getReviewCount(string calldata udri) public view returns (uint256 count) {
+    function getReviewCount(string calldata udri) public view returns (uint256 reviewCount) {
         // TODO: 修改文档那边，方法定义不一致
         return dataStorage.getReviewCount(udri);
     }
@@ -260,9 +265,14 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     }
 
     // 获取某个审核机构对某个数据存证的 审核次数
-    function getReviewCountOfUser(string calldata udri, string calldata reviewerBid) public view returns (uint256 count) {
+    function getReviewCountOfReviewer(string calldata udri, string calldata reviewerBid) public view returns (uint256 count) {
         // TODO: 修改文档那边，方法定义不一致
-        return dataStorage.getReviewCountOfUser(udri, reviewerBid);
+        return dataStorage.getReviewCountOfReviewer(udri, reviewerBid);
+    }
+
+    // 获取某个审核机构对某个数据存证的 某次审核信息
+    function getVerifyDAEvidenceOfReviewer(string calldata udri, string calldata reviewerBid, uint32 index) public view returns (bool isWithdraw, string[] memory metaData, string[] memory variableData) {
+        return dataStorage.getVerifyDAEvidenceOfReviewer(udri, reviewerBid, index);
     }
 
     /******************************************** 确权存证**************************************************/
@@ -278,8 +288,9 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     ) public {
         _checkUserRole(DAEvidenceStorageLib.USER_ROLE_DATA_HOLDER);
         dataStorage.addDataRightEvidence(udri, bid, dataHash, dataRight, metaData, variableData);
-        (, string memory outerEid) = DAEvidenceStorageLib.genEidViaUrdi(udri, DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT);
-        _emitNewEvidence(outerEid);
+        // (, string memory outerEid) = DAEvidenceStorageLib.genEidViaUrdi(udri, _chainName, DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT);
+        // _emitNewEvidence(outerEid);
+        _emitNewRightEvidence(udri);
     }
 
     /* 4.1.2  追加可变数据存证 */
@@ -345,8 +356,8 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
             string memory dataHashSM,
             string memory dataHashSHA,
             string[] memory dataRight,
-            string[] memory metadata,
-            string[] memory variabledata,
+            string[] memory metaData,
+            string[] memory variableData,
             bool isWithdraw
         )
     {
@@ -357,7 +368,7 @@ contract DAEvidenceController is Initializable, DAAccessController, DAEvidenceSt
     function getUserDataRight(string memory udri, string memory bid)
         public
         view
-        returns (string[] memory outRights)
+        returns (string[] memory dataRight)
     {
         return dataStorage.getUserDataRight(udri, bid);
     }

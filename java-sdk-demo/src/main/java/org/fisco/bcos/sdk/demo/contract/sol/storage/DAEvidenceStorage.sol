@@ -12,11 +12,16 @@ contract DAEvidenceStorage is Initializable {
 
     event UserCreated(address indexed sender, string indexed bid, string indexed usci);
     event UserRoleChanged(address indexed sender, string indexed bid);
-    event EvidenceStored(address indexed sender, string indexed udri, string indexed usci);
-    event EvidenceCommStored(address indexed sender, string indexed eid);
+    event NewRightEvidenceStored(address indexed sender, string indexed udri);
+    event NewReviewEvidenceStored(address indexed sender, string indexed udri, uint32 indexed index);
 
-    function _emitNewEvidence(string memory outerEid) internal {
-        emit EvidenceCommStored(msg.sender, outerEid);
+
+    function _emitNewRightEvidence(string memory udri) internal {
+        emit NewRightEvidenceStored(msg.sender, udri);
+    }
+
+    function _emitNewReviewEvidence(string memory udri, uint32 index) internal {
+        emit NewReviewEvidenceStored(msg.sender, udri, index);
     }
 
     function _emitNewUser(string memory bid, string memory usci) internal {

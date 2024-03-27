@@ -73,7 +73,9 @@ library DAEvidenceStorageLib {
         string name;
         uint256 evidenceCount;
         address account;
+        DAEvidenceMap.DAMappingStringArray indefiniteStringArray;
         DAEvidenceMap.DAMappingString indefiniteString;
+        DAEvidenceMap.DAMappingUint32 indefiniteUint32;
         DAEvidenceMap.DAMappingBytes32 indefiniteBytes32;
         mapping(bytes32 => uint32) role; // 0: 无； USER_STATUS_ACTIVE：正常； USER_STATUS_DISABLED：注销
 
@@ -88,7 +90,6 @@ library DAEvidenceStorageLib {
         DAEvidenceMap.DAMappingBytes32 indefiniteBytes32;
 
         string[] metaData;
-        string[] variableData;
         DAEvidenceMap.DAMappingString variableDataMap;
 
         uint256 timestamp;
@@ -112,9 +113,9 @@ library DAEvidenceStorageLib {
         CommData commData; // 存放合约管理相关的数据信息
     }
 
-    function genEidViaUrdi(string memory udri, string memory category) internal pure returns (bytes32 innerEid, string memory outerEidString) {
+    function genEidViaUrdi(string memory udri, string memory method, string memory category) internal pure returns (bytes32 innerEid, string memory outerEidString) {
         innerEid = keccak256(bytes(category.concat(udri)));
-        outerEidString = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_NEW.concat(
+        outerEidString = DAEvidenceStorageLib.EVIDENCE_ID_PREFIX_NEW.concat(method).concat(
             innerEid.toHexStringWithoutPrefix()
         );
     }
@@ -127,11 +128,10 @@ library DAEvidenceStorageLib {
                 _bindOuterInnerEid
                 _emitEvidence
     */
-    function _storeCommEvidence(DAEStorage storage sto, bytes32 innerEid, string memory category, string[] memory metaData, string[] memory variableData) internal {
+    function _storeCommEvidence(DAEStorage storage sto, bytes32 innerEid, string memory category, string[] memory metaData) internal {
         require(sto._commEvidences[innerEid].timestamp == 0, "EvidenceStorage: udri already exists");
         sto._commEvidences[innerEid].category = category;
         sto._commEvidences[innerEid].metaData = metaData;
-        sto._commEvidences[innerEid].variableData = variableData;
         sto._commEvidences[innerEid].timestamp = block.timestamp;
     }
 
@@ -164,9 +164,9 @@ library DAEvidenceStorageLib {
         return (evidence.timestamp != 0);
     }
 
-    function _getCommEvidenceById(DAEStorage storage sto, bytes32 innerEid) internal view returns (bool, uint256 timestamp, string memory category, string[] memory metaData, string[] memory variableData ) {
+    function _getCommEvidenceById(DAEStorage storage sto, bytes32 innerEid) internal view returns (bool, uint256 timestamp, string memory category, string[] memory metaData) {
         CommEvidence storage evidence = sto._commEvidences[innerEid];
-        return (evidence.timestamp != 0, evidence.timestamp, evidence.category, evidence.metaData, evidence.variableData);
+        return (evidence.timestamp != 0, evidence.timestamp, evidence.category, evidence.metaData);
     }
 
     function _getCommEvidenceStorageById(DAEStorage storage sto, bytes32 innerEid) internal view returns (CommEvidence storage evidence) {
@@ -592,6 +592,11 @@ library DAEvidenceStorageLib {
         udriArray = udriArrayTmp;
     }
 
+    // 不安全的接口，确保调用前已经做了 udri 检查
+    function getEvidenceReviewCount(DAEStorage storage sto, string memory udri)internal view returns (uint32 count) {
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        count = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_COUNT);
+    }
 
     /******************************************** 审查存证 **************************************************/
     /* 4.2 审查存证 */
@@ -613,7 +618,7 @@ library DAEvidenceStorageLib {
         }
         bytes32 innerEid = keccak256(bytes(str)); //审核存证 内部eid
 
-        _storeCommEvidence(sto, innerEid, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW, metaData, variableData);
+        _storeCommEvidence(sto, innerEid, DAEvidenceStorageLib.EVIDENCE_CATEGORY_REVIEW, metaData);
         _setCommEvidenceIndefiniteString(sto, innerEid, "version", "EVIDENCE_CONTRACT_VERSION_V1");
         _setCommEvidenceIndefiniteString(sto, innerEid, "udri", udri);
         _setCommEvidenceIndefiniteString(sto, innerEid, "reviewerBid", reviewerBid);
@@ -673,14 +678,15 @@ library DAEvidenceStorageLib {
         require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
 
         bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        uint32 count = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_COUNT);
+        require(index < count, "iinvalid index");
         bytes32 innerEid = _getCommEvidenceIndefiniteBytes32(sto, rightInnerEid, DAEvidenceStorageLib.EVIDENCE_DATA_REVIEW_INDEX.concat(index.toString()));
         reviewerBid = _getCommEvidenceIndefiniteString(sto, innerEid, "reviewerBid");
         (
             ,
             ,
             string memory _category,
-            string[] memory _metaData,
-            string[] memory _variableData
+            string[] memory _metaData
         ) = _getCommEvidenceById(sto, innerEid);
         string memory status = _getCommEvidenceIndefiniteString(sto, innerEid, "status");
         isWithdraw = status.equal(DAEvidenceStorageLib.EVIDENCE_STATUS_DISABLED);
@@ -689,13 +695,33 @@ library DAEvidenceStorageLib {
     }
 
     // 获取某个审核机构对某个数据存证的 审核次数
-    function getReviewCountOfUser(DAEStorage storage sto, string calldata udri, string calldata reviewerBid) internal view returns (uint256) {
+    function getReviewCountOfReviewer(DAEStorage storage sto, string calldata udri, string calldata reviewerBid) internal view returns (uint256) {
         // TODO: 修改文档那边，方法定义不一致
         require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
  
         bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
         string memory key = reviewerBid.concat(":review_count="); // 某个审查机构review数目
         return _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, key);
+    }
+
+    /* 查询某个审核机构某次审查存证信息 */
+    function getVerifyDAEvidenceOfReviewer(DAEStorage storage sto, string calldata udri, string calldata reviewerBid, uint32 index) internal view returns (bool isWithdraw, string[] memory metaData, string[] memory variableData)  {
+        require(checkUdriOnChain(sto, udri) == true, "udri not on chain.");
+
+        bytes32 rightInnerEid = keccak256(bytes(DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
+        uint32 count = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_COUNT));// 审查机构review数目
+        require(index < count, "invalid index");
+        bytes32 innerEid = _getCommEvidenceIndefiniteBytes32(sto, rightInnerEid, reviewerBid.concat(DAEvidenceStorageLib.EVIDENCE_DATA_USER_REVIEW_INDEX).concat(index.toString()));
+        (
+            ,
+            ,
+            string memory _category,
+            string[] memory _metaData
+        ) = _getCommEvidenceById(sto, innerEid);
+        string memory status = _getCommEvidenceIndefiniteString(sto, innerEid, "status");
+        isWithdraw = status.equal(DAEvidenceStorageLib.EVIDENCE_STATUS_DISABLED);
+        metaData = _metaData;
+        variableData = _getVariableData(sto, innerEid, _category);
     }
 
     /******************************************** 确权存证**************************************************/
@@ -790,8 +816,7 @@ library DAEvidenceStorageLib {
             sto,
             innerEid,
             DAEvidenceStorageLib.EVIDENCE_CATEGORY_RIGHT,
-            metaData,
-            variableData
+            metaData
         );
         _setCommEvidenceIndefiniteString(
             sto,
@@ -940,8 +965,7 @@ library DAEvidenceStorageLib {
             ,
             ,
             string memory _category,
-            string[] memory _metaData,
-            string[] memory _variableData
+            string[] memory _metaData
         ) = _getCommEvidenceById(sto, innerEid);
 
         dataHashSM = dataHash[0];
