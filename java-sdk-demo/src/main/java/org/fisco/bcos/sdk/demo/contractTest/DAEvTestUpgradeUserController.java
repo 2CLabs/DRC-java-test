@@ -6,27 +6,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
+import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
 import org.fisco.bcos.sdk.demo.contract.DAEvidenceInterface;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
-import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.ConstantConfig;
 import org.fisco.bcos.sdk.v3.model.CryptoType;
+import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DAEvTestGet {
+public class DAEvTestUpgradeUserController {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DAEvTestGet test===========");
+        System.out.println("===== DAEvTestUpgradeUserController test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestGet [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgradeUserController [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -64,7 +65,10 @@ public class DAEvTestGet {
             throws ContractException, IOException, InterruptedException {
         try {
             String configFileName = ConstantConfig.CONFIG_FILE_NAME;
-            URL configUrl = DAEvTestGet.class.getClassLoader().getResource(configFileName);
+            URL configUrl =
+                    DAEvTestUpgradeAdminController.class
+                            .getClassLoader()
+                            .getResource(configFileName);
             if (configUrl == null) {
                 throw new IOException("The configFile " + configFileName + " doesn't exist!");
             }
@@ -95,8 +99,16 @@ public class DAEvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
+            String strAdminAddr = "0x53b4af9bab0bdb650c0d35552f338d7a61e61483";
+            String strUserAddr = "0xbbb781bb9ca3a968b618d2d6c03d04e3f0fa1b9a";
+            String strRightAddr = "0xb9d0f8be8dcdcc73064cf3218328226d6e89e3eb";
+            String strReviewAddr = "0x7a588b0ca42f985d680e8a33a5227d2643e554fa";
+            String strProxyAdminaddr = "0xf118bd64a1d851abdc7ae5ee26656b87f085e03c";
             String strProxyaddr = "0x646288eca221515adf7994e4ab0528ad3a6f0e5d";
+            String strNewUseraddr = "0x28f7ea70a16f6e02da756eb6f463a5d5ea09af02";
 
+            DAEvProxyAdmin yy = DAEvProxyAdmin.load(strProxyAdminaddr, client, committee);
+            System.out.println("Load DAEvProxyAdmin finish: " + strProxyAdminaddr);
             DAEvProxy zz = DAEvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DAEvProxy finish: " + strProxyaddr);
 
@@ -104,6 +116,11 @@ public class DAEvTestGet {
             System.out.println("Load DAEvProxy as DAEvidenceInterface finish");
 
             System.out.println("---------------------------------------");
+
+            TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
+            System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
+            System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
+
             List<String> strArrQueryRole = new ArrayList<>();
             strArrQueryRole = xx_2.queryUserRole();
             System.out.println("strArrQueryRole: " + strArrQueryRole.size());
@@ -112,25 +129,19 @@ public class DAEvTestGet {
                 System.out.println("strArrQueryRole name: " + element);
             }
 
-            System.out.println("---------------------------------------");
-            Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
-            System.out.println("getUserRoles result 1: " + getResult.getValue1());
-            System.out.println("getUserRoles result 2: " + getResult.getValue2());
-            System.out.println("getUserRoles result 3: " + getResult.getValue3().size());
-            for (int i = 0; i < getResult.getValue3().size(); i++) {
-                String element = getResult.getValue3().get(i);
-                System.out.println("getResult 3 Roles name: " + element);
-            }
+            System.out.println("---------------upgrade-------------------");
+            TransactionReceipt setContract_1 =
+                    xx_2.setContract("next_logic_of_admin", strNewUseraddr);
+            System.out.println("setContract_1 Tx status: " + setContract_1.isStatusOK());
+            System.out.println("setContract_1 TX hash: " + setContract_1.getTransactionHash());
+            String next1 = xx_2.getContract("next_logic_of_admin");
+            System.out.println("next_logic_of_admin address: " + next1);
 
             System.out.println("---------------------------------------");
-            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData("urd:001"); // 成功
-            System.out.println("getRegisteredData result 1: " + resultnew.getValue1());
-            System.out.println("getRegisteredData result 2: " + resultnew.getValue2());
-            System.out.println("getRegisteredData result 3: " + resultnew.getValue3());
-            System.out.println("getRegisteredData result 4: " + resultnew.getValue4());
-            System.out.println("getRegisteredData result 5: " + resultnew.getValue5());
-            System.out.println("getRegisteredData result 6: " + resultnew.getValue6());
+            Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
+            System.out.println("getResult after upgrade 1: " + getResult1.getValue1());
+            System.out.println("getResult after upgrade 2: " + getResult1.getValue2());
+            System.out.println("getResult after upgrade 3: " + getResult1.getValue3().size());
 
             System.out.println("---------------------------------------");
             List<String> strArrUserDataRight = new ArrayList<>();
@@ -141,7 +152,6 @@ public class DAEvTestGet {
                 System.out.println("strArrUserDataRight name: " + element);
             }
             System.out.println("---------------------------------------");
-
             String strUdri =
                     xx_2.getUdriByDatahash(
                             "0xc24d340cca7669f4d8933635a0c09caa7d2ecfaba0b34053e32789168171e50a");
@@ -168,10 +178,6 @@ public class DAEvTestGet {
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
             System.out.println("VerifyDataGetResult 4: " + VerifyDataGetResult.getValue4());
 
-            System.out.println("---------------------------------------");
-
-            // String strChainName = xx_2.getChainName(); // 成功
-            // System.out.println("strChainName: " + strChainName);
             System.out.println("---------------------------------------");
 
             blockNumber = client.getBlockNumber();

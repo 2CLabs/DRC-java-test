@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
 import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
-import org.fisco.bcos.sdk.demo.contract.DAEvidenceController;
+import org.fisco.bcos.sdk.demo.contract.DAEvidenceInterface;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -20,14 +20,14 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DAEvTestUpgrade {
+public class DAEvTestUpgradeAdminController {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DAEvidenceController.sol test===========");
+        System.out.println("===== DAEvTestUpgradeAdminController test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgrade [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgradeAdminController [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -65,7 +65,10 @@ public class DAEvTestUpgrade {
             throws ContractException, IOException, InterruptedException {
         try {
             String configFileName = ConstantConfig.CONFIG_FILE_NAME;
-            URL configUrl = DAEvTestUpgrade.class.getClassLoader().getResource(configFileName);
+            URL configUrl =
+                    DAEvTestUpgradeAdminController.class
+                            .getClassLoader()
+                            .getResource(configFileName);
             if (configUrl == null) {
                 throw new IOException("The configFile " + configFileName + " doesn't exist!");
             }
@@ -95,20 +98,22 @@ public class DAEvTestUpgrade {
             CryptoKeyPair committee = cryptoSuite.getCryptoKeyPair();
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
-            // DAEvidenceController xx =
-            //        DAEvidenceController.load(
-            //                "0x293f95b4158864b60d924eef4025da5ce9be1817", client, committee);
-            DAEvProxyAdmin yy =
-                    DAEvProxyAdmin.load(
-                            "0x36bb9734a62b50c662c9909b1d603e2a2730128e", client, committee);
-            String stryyaddr = yy.getContractAddress();
-            System.out.println("DAEvProxyAdmin Contract Address: " + stryyaddr);
-            DAEvProxy zz =
-                    DAEvProxy.load("0xdebaebec5aafe8f7527279805513c4b9a2964650", client, committee);
-            String strzzaddr = zz.getContractAddress();
-            System.out.println("Load DAEvProxy finish: " + strzzaddr);
 
-            DAEvidenceController xx_2 = DAEvidenceController.load(strzzaddr, client, committee);
+            String strAdminAddr = "0x53b4af9bab0bdb650c0d35552f338d7a61e61483";
+            String strUserAddr = "0xbbb781bb9ca3a968b618d2d6c03d04e3f0fa1b9a";
+            String strRightAddr = "0xb9d0f8be8dcdcc73064cf3218328226d6e89e3eb";
+            String strReviewAddr = "0x7a588b0ca42f985d680e8a33a5227d2643e554fa";
+            String strProxyAdminaddr = "0xf118bd64a1d851abdc7ae5ee26656b87f085e03c";
+            String strProxyaddr = "0x646288eca221515adf7994e4ab0528ad3a6f0e5d";
+            String strNewAdminaddr = "0xb73c1512e41c95e77324da86ece728357bcf9cd8";
+
+            DAEvProxyAdmin yy = DAEvProxyAdmin.load(strProxyAdminaddr, client, committee);
+            System.out.println("Load DAEvProxyAdmin finish: " + strProxyAdminaddr);
+            DAEvProxy zz = DAEvProxy.load(strProxyaddr, client, committee);
+            System.out.println("Load DAEvProxy finish: " + strProxyaddr);
+
+            DAEvidenceInterface xx_2 = DAEvidenceInterface.load(strProxyaddr, client, committee);
+            System.out.println("Load DAEvProxy as DAEvidenceInterface finish");
 
             System.out.println("---------------------------------------");
 
@@ -124,28 +129,15 @@ public class DAEvTestUpgrade {
                 System.out.println("strArrQueryRole name: " + element);
             }
 
-            Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
-            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
-            System.out.println("getResult before upgrade 1: " + getResult.getValue1());
-            System.out.println("getResult before upgrade 2: " + getResult.getValue2());
-            System.out.println("getResult before upgrade 3: " + getResult.getValue3().size());
-
-            System.out.println("---------------------------------------");
-            // String strChainName = xx_2.getChainName(); // 成功
-            // System.out.println("strChainName: " + strChainName);
-
             System.out.println("---------------upgrade-------------------");
             TransactionReceipt upgradeReceipt =
-                    yy.upgrade(
-                            strzzaddr,
-                            "0x5b89b5647c3626ad1ceb4b4b4e9e3c15819fb409"); // 这个实际会调用 strzzaddr 的
+                    yy.upgrade(strProxyaddr, strNewAdminaddr); // 这个实际会调用 strProxyaddr 的
             // upgradeTo
             System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
             System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
 
             System.out.println("---------------------------------------");
             Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
-            // Tuple3<String, String, List<String>> getResult = xx.getUserRoles("bid");
             System.out.println("getResult after upgrade 1: " + getResult1.getValue1());
             System.out.println("getResult after upgrade 2: " + getResult1.getValue2());
             System.out.println("getResult after upgrade 3: " + getResult1.getValue3().size());

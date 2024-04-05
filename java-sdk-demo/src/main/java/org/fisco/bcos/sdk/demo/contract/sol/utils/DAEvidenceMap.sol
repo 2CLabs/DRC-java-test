@@ -92,4 +92,22 @@ library DAEvidenceMap {
     function get(DAMappingBytes32 storage set, bytes32 key) internal view returns (bytes32) {
         return set._kv[key];
     }
+
+    // DAMappingAddress
+    struct DAMappingAddress {
+        mapping(bytes32 => address) _kv;
+    }
+
+    function update(DAMappingAddress storage set, bytes32 key, address value) internal returns (bool) {
+        set._kv[key] = value;
+        return true;
+    }
+
+    function add(DAMappingAddress storage set, bytes32 key, address value) internal returns (bool) {
+        return update(set, key, value);
+    }
+
+    function get(DAMappingAddress storage set, bytes32 key) internal view returns (address) {
+        return set._kv[key];
+    }
 }
