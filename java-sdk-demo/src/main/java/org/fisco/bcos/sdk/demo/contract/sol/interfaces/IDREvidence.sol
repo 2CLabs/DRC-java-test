@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface DAEvidenceInterface  {
+interface IDREvidence  {
     /******************************************** Admin **************************************************/
 
     function setChainName(string memory name) external;
@@ -36,10 +36,6 @@ interface DAEvidenceInterface  {
     // 数据权限管理--- 获取分类
     function getDataRightCategory() external view returns(string[] memory fields);
 
-    function setContract(string memory logicName, address _LogicContract) external;
-
-    function getContract(string memory logicName) external view returns(address _LogicContract);
-
     /******************************************** 用户 **************************************************/
     function queryUserRole() external view returns (string[] memory);
     
@@ -51,7 +47,7 @@ interface DAEvidenceInterface  {
     - 调用限制
     该接口只有运营方(合约所有者)能调用。
 
-    DAAccessController 中已经定义
+    DRAccessController 中已经定义
     */
     function grantUserManagePermission(string memory bid, address account) external;
 
@@ -61,11 +57,11 @@ interface DAEvidenceInterface  {
     - 调用限制
     该接口只有运营方(合约所有者)能调用。
 
-    DAAccessController 中已经定义
+    DRAccessController 中已经定义
     */
     function revokeUserManagePermission(string memory bid) external;
 
-    function hasDAUserManageRole(string memory bid) external view returns (bool);
+    function hasUserManageRole(string memory bid) external view returns (bool);
 
     /*
     3.2 用户角色管理
@@ -115,13 +111,13 @@ interface DAEvidenceInterface  {
     function getReviewCount(string calldata udri) external view returns (uint256 reviewCount);
 
     /* 5.3.2 查询审查存证信息 */
-    function getVerifyDAEvidence(string calldata udri, uint32 index) external view returns (bool isWithdraw, string memory reviewerBid, string[] memory metaData, string[] memory variableData);
+    function getVerifyEvidence(string calldata udri, uint32 index) external view returns (bool isWithdraw, string memory reviewerBid, string[] memory metaData, string[] memory variableData);
 
     // 获取某个审核机构对某个数据存证的 审核次数
     function getReviewCountOfReviewer(string calldata udri, string calldata reviewerBid) external view returns (uint256 count);
 
     // 获取某个审核机构对某个数据存证的 某次审核信息
-    function getVerifyDAEvidenceOfReviewer(string calldata udri, string calldata reviewerBid, uint32 index) external view returns (bool isWithdraw, string[] memory metaData, string[] memory variableData);
+    function getVerifyEvidenceOfReviewer(string calldata udri, string calldata reviewerBid, uint32 index) external view returns (bool isWithdraw, string[] memory metaData, string[] memory variableData);
     /******************************************** 确权存证**************************************************/
     /*4. 存证 */
     /* 4.1.1 新增确权存证 */

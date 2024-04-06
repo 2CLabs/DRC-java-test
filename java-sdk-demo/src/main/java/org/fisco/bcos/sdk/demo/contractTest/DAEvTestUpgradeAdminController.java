@@ -5,9 +5,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
-import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
-import org.fisco.bcos.sdk.demo.contract.DAEvidenceInterface;
+import org.fisco.bcos.sdk.demo.contract.DREvProxy;
+import org.fisco.bcos.sdk.demo.contract.DREvProxyAdmin;
+import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -61,6 +61,16 @@ public class DAEvTestUpgradeAdminController {
         return sb.toString().trim();
     }
 
+    public static String toHexStringWithPadding(BigInteger bigInteger) {
+        String hexString = bigInteger.toString(16);
+
+        if (hexString.length() < 8) {
+            hexString = String.format("%8s", hexString).replace(' ', '0');
+        }
+
+        return hexString;
+    }
+
     public static void main(String[] args)
             throws ContractException, IOException, InterruptedException {
         try {
@@ -99,27 +109,20 @@ public class DAEvTestUpgradeAdminController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0x53b4af9bab0bdb650c0d35552f338d7a61e61483";
-            String strUserAddr = "0xbbb781bb9ca3a968b618d2d6c03d04e3f0fa1b9a";
-            String strRightAddr = "0xb9d0f8be8dcdcc73064cf3218328226d6e89e3eb";
-            String strReviewAddr = "0x7a588b0ca42f985d680e8a33a5227d2643e554fa";
-            String strProxyAdminaddr = "0xf118bd64a1d851abdc7ae5ee26656b87f085e03c";
-            String strProxyaddr = "0x646288eca221515adf7994e4ab0528ad3a6f0e5d";
-            String strNewAdminaddr = "0xb73c1512e41c95e77324da86ece728357bcf9cd8";
+            String strAdminAddr = "0x42efc7f5d5c30d2ad43fb28e97bbb6044a2cc3f3";
+            String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
+            String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
+            String strNewAdminaddr = "0x20f799d031f2414da8d190172131ad6140097bc9";
 
-            DAEvProxyAdmin yy = DAEvProxyAdmin.load(strProxyAdminaddr, client, committee);
-            System.out.println("Load DAEvProxyAdmin finish: " + strProxyAdminaddr);
-            DAEvProxy zz = DAEvProxy.load(strProxyaddr, client, committee);
-            System.out.println("Load DAEvProxy finish: " + strProxyaddr);
+            DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
+            System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
+            DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
+            System.out.println("Load DREvProxy finish: " + strProxyaddr);
 
-            DAEvidenceInterface xx_2 = DAEvidenceInterface.load(strProxyaddr, client, committee);
-            System.out.println("Load DAEvProxy as DAEvidenceInterface finish");
+            IDREvidence xx_2 = IDREvidence.load(strProxyaddr, client, committee);
+            System.out.println("Load DREvProxy as IDREvidence finish");
 
             System.out.println("---------------------------------------");
-
-            TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
-            System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
-            System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
 
             List<String> strArrQueryRole = new ArrayList<>();
             strArrQueryRole = xx_2.queryUserRole();
@@ -130,11 +133,79 @@ public class DAEvTestUpgradeAdminController {
             }
 
             System.out.println("---------------upgrade-------------------");
-            TransactionReceipt upgradeReceipt =
-                    yy.upgrade(strProxyaddr, strNewAdminaddr); // 这个实际会调用 strProxyaddr 的
-            // upgradeTo
-            System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
-            System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+            // TransactionReceipt upgradeReceipt =
+            //        yy.upgrade(strProxyaddr, strNewAdminaddr); // 这个实际会调用 strProxyaddr 的
+            // System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
+            // System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+            /*List<String> stradminSelector =
+            new ArrayList<String>() {
+                {
+                    add("1980433629"); // disableAccessControl
+                    add("922088542"); // enableAccessControl
+                    add("2324699571"); // getDataRightCategory
+
+                    add("3869446330"); // getSupportVariableDataFields
+                    add("1037211317"); // grantUserManagePermission
+                    add("1290417574"); // hasUserManageRole
+
+                    add("2167012380"); // initialize
+                    add("3234078498"); // setChainName
+                    add("2472945857"); // setDataRightCategory
+
+                    add("1199116808"); // setDataRightSupportVariableDataFields
+                    add("1356933702"); // setTextMaxLen
+                    add("3609374908"); // getChainName
+
+                    add("3460282540"); // getTextMaxLen
+                    add("905356897"); // getstrArrayMaxLen
+                    add("4229803393"); // getAccessControl
+                }
+            };*/
+
+            List<String> stradminSMSelector =
+                    new ArrayList<String>() {
+                        {
+                            add("2854924890"); // disableAccessControl
+                            add("1158894738"); // enableAccessControl
+                            add("3796759802"); // getDataRightCategory
+
+                            add("376683502"); // getSupportVariableDataFields
+                            add("3070963644"); // grantUserManagePermission
+                            add("3048132719"); // hasUserManageRole
+
+                            add("3932184381"); // initialize
+                            add("3307895570"); // setChainName
+                            add("2087572871"); // setDataRightCategory
+
+                            add("2135762870"); // setDataRightSupportVariableDataFields
+                            add("1285167137"); // setTextMaxLen
+                            add("728140679"); // getChainName
+
+                            add("1588090095"); // getTextMaxLen
+                            add("1921885619"); // getstrArrayMaxLen
+                            add("1904329564"); // getAccessControl
+                        }
+                    };
+
+            List<byte[]> selectors = new ArrayList<byte[]>();
+            List<String> logicAddresses = new ArrayList<String>();
+
+            for (int i = 0; i < stradminSMSelector.size(); i++) {
+                String element = stradminSMSelector.get(i);
+                String tmp = toHexStringWithPadding(new BigInteger(element));
+                // System.out.println("after toHexStringWithPadding: " + tmp);
+                byte[] selector = hexStringToByteArray(tmp);
+                System.out.println(
+                        "stradminSMSelector after hexStringToByteArray: "
+                                + byteArrayToHexString(selector));
+                selectors.add(selector);
+                logicAddresses.add(strNewAdminaddr);
+            }
+
+            TransactionReceipt setSelectors =
+                    yy.setSelectors(strProxyaddr, selectors, logicAddresses);
+            System.out.println("setSelectors admin Tx status: " + setSelectors.isStatusOK());
+            System.out.println("setSelectors admin TX hash: " + setSelectors.getTransactionHash());
 
             System.out.println("---------------------------------------");
             Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
@@ -171,7 +242,7 @@ public class DAEvTestUpgradeAdminController {
             System.out.println("reviewdatacount: " + reviewdatacount);
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("1"));
+                    xx_2.getVerifyEvidence("urd:001", new BigInteger("1"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());

@@ -1,31 +1,31 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./utils/DAEvidenceString.sol";
-import "./utils/DAEvidenceMap.sol";
-import "./DAAccessController.sol";
-import "./storage/DAEvidenceStorage.sol";
-import "./storage/DAEvidenceStorageLib.sol";
-import "./storage/DAEvidenceStorageDefine.sol";
-import "./storage/DAEvidenceStorageConstant.sol";
+import "./utils/DREvidenceString.sol";
+import "./utils/DREvidenceMap.sol";
+import "./DRAccessController.sol";
+import "./storage/DREvidenceStorage.sol";
+import "./storage/DREvidenceStorageLib.sol";
+import "./storage/DREvidenceStorageDefine.sol";
+import "./storage/DREvidenceStorageConstant.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
 
-contract DAEvidenceAdminController is Initializable, DAAccessController, DAEvidenceStorage {
+contract DREvidenceAdminController is Initializable, DRAccessController, DREvidenceStorage {
 
-    using DAEvidenceMap for DAEvidenceMap.DAMappingString;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingUint32;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingStringArray;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingBytes32;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingAddress;
+    using DREvidenceMap for DREvidenceMap.DRMappingString;
+    using DREvidenceMap for DREvidenceMap.DRMappingUint32;
+    using DREvidenceMap for DREvidenceMap.DRMappingStringArray;
+    using DREvidenceMap for DREvidenceMap.DRMappingBytes32;
+    using DREvidenceMap for DREvidenceMap.DRMappingAddress;
     using Strings for uint32;
-    using DAEvidenceString for string;
-    using DAEvidenceString for bytes32;
-    using DAEvidenceString for uint256;
-    // using DAEvidenceString for uint32;
+    using DREvidenceString for string;
+    using DREvidenceString for bytes32;
+    using DREvidenceString for uint256;
+    // using DREvidenceString for uint32;
 
-    using DAEvidenceStorageLib for DAEvidenceStorageDefine.DAEStorage;
+    using DREvidenceStorageLib for DREvidenceStorageDefine.DREStorage;
 
 
     function initialize() public initializer {
@@ -94,14 +94,6 @@ contract DAEvidenceAdminController is Initializable, DAAccessController, DAEvide
         return dataStorage.commData.byte32ToUint32.get(keyStr.hash());
     }
 
-    function setContract(string memory logicName, address _LogicContract) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        dataStorage.LogicAddress[logicName] = _LogicContract;
-    }
-
-    function getContract(string memory logicName) public view returns(address _LogicContract) {
-        return dataStorage.LogicAddress[logicName];
-    }
-
     // 获取当前某种存证支持的 variableData 字段
     function getSupportVariableDataFields(string memory category) public view returns (string[] memory fileds) {
         return dataStorage.getSupportVariableDataFields(category);
@@ -136,10 +128,4 @@ contract DAEvidenceAdminController is Initializable, DAAccessController, DAEvide
     function getDataRightCategory() public view returns(string[] memory fields) {
         return dataStorage.getDataRightCategory();
     }
-
-    // function _implementation() internal view virtual override returns (address) {
-    //     address nextLogicContract = dataStorage.LogicAddress["next_logic_of_admin"];
-    //     require(nextLogicContract != address(0), "Unknown function.");
-    //     return nextLogicContract;
-    // }
 }

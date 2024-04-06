@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract DAAccessController is AccessControlUpgradeable {
+contract DRAccessController is AccessControlUpgradeable {
     bytes32 public constant USERMANAGE_ROLE = keccak256("USERMANAGE_ROLE");
 
     mapping(string => address) private _usermanagers; // bid = address
@@ -22,7 +22,7 @@ contract DAAccessController is AccessControlUpgradeable {
         }
     }
 
-    function hasDAUserManageRole(string memory bid) public view virtual returns (bool) {
+    function hasUserManageRole(string memory bid) public view virtual returns (bool) {
         if(_usermanagers[bid]!=address(0))
           return hasRole(USERMANAGE_ROLE, _usermanagers[bid]);
         else

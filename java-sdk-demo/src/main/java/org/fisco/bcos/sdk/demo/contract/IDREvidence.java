@@ -29,7 +29,7 @@ import org.fisco.bcos.sdk.v3.model.callback.TransactionCallback;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
 @SuppressWarnings("unchecked")
-public class DAEvidenceInterface extends Contract {
+public class IDREvidence extends Contract {
     public static final String[] BINARY_ARRAY = {};
 
     public static final String BINARY =
@@ -41,8 +41,8 @@ public class DAEvidenceInterface extends Contract {
             org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", SM_BINARY_ARRAY);
 
     public static final String[] ABI_ARRAY = {
-        "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataHash\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"addDataRightEvidence\",\"outputs\":[],\"selector\":[2635209621,3623663505],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"reviewDataHash\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"addReviewEvidence\",\"outputs\":[],\"selector\":[4024293368,766756406],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"usci\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"addUser\",\"outputs\":[],\"selector\":[3239424820,3652011643],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"appendVariableData\",\"outputs\":[],\"selector\":[2138450037,1301797456],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"disableAccessControl\",\"outputs\":[],\"selector\":[1980433629,2854924890],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"enableAccessControl\",\"outputs\":[],\"selector\":[922088542,1158894738],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccessControl\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"status\",\"type\":\"uint32\"}],\"selector\":[4229803393,1904329564],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"selector\":[3609374908,728140679],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"logicName\",\"type\":\"string\"}],\"name\":\"getContract\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_LogicContract\",\"type\":\"address\"}],\"selector\":[897677171,2871620091],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getDataCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"dataCount\",\"type\":\"uint256\"}],\"selector\":[816278328,3023591269],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"start\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"getDataList\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"udriArray\",\"type\":\"string[]\"}],\"selector\":[2492434596,1794719790],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDataRightCategory\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"selector\":[2324699571,3796759802],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"name\":\"getRegisteredData\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"dataHashSM\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dataHashSHA\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"},{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"}],\"selector\":[208288129,3936625741],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"name\":\"getReviewCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"reviewCount\",\"type\":\"uint256\"}],\"selector\":[1485793629,1330250274],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"}],\"name\":\"getReviewCountOfReviewer\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"selector\":[3868489521,2826438872],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"}],\"name\":\"getSupportVariableDataFields\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"fileds\",\"type\":\"string[]\"}],\"selector\":[3869446330,376683502],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTextMaxLen\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"selector\":[3460282540,1588090095],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"dataHash\",\"type\":\"string\"}],\"name\":\"getUdriByDatahash\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"selector\":[633708824,3726531728],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getUserDataRight\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"selector\":[1105228669,1195862205],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getUserRoles\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"usci\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"selector\":[2573946725,1585755409],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"index\",\"type\":\"uint32\"}],\"name\":\"getVerifyDAEvidence\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"selector\":[3966063325,3363562759],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"index\",\"type\":\"uint32\"}],\"name\":\"getVerifyDAEvidenceOfReviewer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"selector\":[910005145,2146111649],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getstrArrayMaxLen\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"selector\":[905356897,1921885619],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"grantUserDataRight\",\"outputs\":[],\"selector\":[3258251539,3358242835],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantUserManagePermission\",\"outputs\":[],\"selector\":[1037211317,3070963644],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"grantUserRoles\",\"outputs\":[],\"selector\":[2322354691,115265356],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"hasDAUserManageRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"selector\":[1195994301,4114364435],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"queryUserRole\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"selector\":[289",
-        "407936,1912013404],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"revokeUserManagePermission\",\"outputs\":[],\"selector\":[4233016450,2768200898],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"revokeUserRoles\",\"outputs\":[],\"selector\":[593762734,2271659916],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setChainName\",\"outputs\":[],\"selector\":[3234078498,3307895570],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"logicName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_LogicContract\",\"type\":\"address\"}],\"name\":\"setContract\",\"outputs\":[],\"selector\":[1057935583,1641680881],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"name\":\"setDataRightCategory\",\"outputs\":[],\"selector\":[2472945857,2087572871],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"name\":\"setDataRightSupportVariableDataFields\",\"outputs\":[],\"selector\":[1199116808,2135762870],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"name\":\"setTextMaxLen\",\"outputs\":[],\"selector\":[1356933702,1285167137],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"name\":\"setstrArrayMaxLen\",\"outputs\":[],\"selector\":[453424020,3279923519],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"withdrawDataRightRegister\",\"outputs\":[],\"selector\":[2392051885,1179902888],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"}],\"name\":\"withdrawReviewEvidence\",\"outputs\":[],\"selector\":[932021754,2229502562],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"withdrawUserDataRight\",\"outputs\":[],\"selector\":[4211774851,2825282343],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+        "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataHash\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"addDataRightEvidence\",\"outputs\":[],\"selector\":[2635209621,3623663505],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"reviewDataHash\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"addReviewEvidence\",\"outputs\":[],\"selector\":[4024293368,766756406],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"usci\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"addUser\",\"outputs\":[],\"selector\":[3239424820,3652011643],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"name\":\"appendVariableData\",\"outputs\":[],\"selector\":[2138450037,1301797456],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"disableAccessControl\",\"outputs\":[],\"selector\":[1980433629,2854924890],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"enableAccessControl\",\"outputs\":[],\"selector\":[922088542,1158894738],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccessControl\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"status\",\"type\":\"uint32\"}],\"selector\":[4229803393,1904329564],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"selector\":[3609374908,728140679],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getDataCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"dataCount\",\"type\":\"uint256\"}],\"selector\":[816278328,3023591269],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"start\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"getDataList\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"udriArray\",\"type\":\"string[]\"}],\"selector\":[2492434596,1794719790],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDataRightCategory\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"selector\":[2324699571,3796759802],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"name\":\"getRegisteredData\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"dataHashSM\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dataHashSHA\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"},{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"}],\"selector\":[208288129,3936625741],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"name\":\"getReviewCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"reviewCount\",\"type\":\"uint256\"}],\"selector\":[1485793629,1330250274],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"}],\"name\":\"getReviewCountOfReviewer\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"selector\":[3868489521,2826438872],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"}],\"name\":\"getSupportVariableDataFields\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"fileds\",\"type\":\"string[]\"}],\"selector\":[3869446330,376683502],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTextMaxLen\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"selector\":[3460282540,1588090095],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"dataHash\",\"type\":\"string\"}],\"name\":\"getUdriByDatahash\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"}],\"selector\":[633708824,3726531728],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getUserDataRight\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"selector\":[1105228669,1195862205],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"getUserRoles\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"usci\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"selector\":[2573946725,1585755409],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"index\",\"type\":\"uint32\"}],\"name\":\"getVerifyEvidence\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"selector\":[1855339097,4061585395],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"index\",\"type\":\"uint32\"}],\"name\":\"getVerifyEvidenceOfReviewer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isWithdraw\",\"type\":\"bool\"},{\"internalType\":\"string[]\",\"name\":\"metaData\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"variableData\",\"type\":\"string[]\"}],\"selector\":[1591648918,3508812136],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getstrArrayMaxLen\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"selector\":[905356897,1921885619],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"grantUserDataRight\",\"outputs\":[],\"selector\":[3258251539,3358242835],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantUserManagePermission\",\"outputs\":[],\"selector\":[1037211317,3070963644],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"grantUserRoles\",\"outputs\":[],\"selector\":[2322354691,115265356],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"hasUserManageRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"selector\":[1290417574,3048132719],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"queryUserRole\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"selector\":[289407936,1912013404],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"}],\"name\":\"revokeUserManagePermission\",\"outputs\":[],\"selector\":[4233016450,2768200898],\"stateMutability\":\"nonpayable\",\"type\":\"func",
+        "tion\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"roles\",\"type\":\"string[]\"}],\"name\":\"revokeUserRoles\",\"outputs\":[],\"selector\":[593762734,2271659916],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setChainName\",\"outputs\":[],\"selector\":[3234078498,3307895570],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"name\":\"setDataRightCategory\",\"outputs\":[],\"selector\":[2472945857,2087572871],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"fields\",\"type\":\"string[]\"}],\"name\":\"setDataRightSupportVariableDataFields\",\"outputs\":[],\"selector\":[1199116808,2135762870],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"name\":\"setTextMaxLen\",\"outputs\":[],\"selector\":[1356933702,1285167137],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"len\",\"type\":\"uint32\"}],\"name\":\"setstrArrayMaxLen\",\"outputs\":[],\"selector\":[453424020,3279923519],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"withdrawDataRightRegister\",\"outputs\":[],\"selector\":[2392051885,1179902888],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"reviewerBid\",\"type\":\"string\"}],\"name\":\"withdrawReviewEvidence\",\"outputs\":[],\"selector\":[932021754,2229502562],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"udri\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"bid\",\"type\":\"string\"},{\"internalType\":\"string[]\",\"name\":\"dataRight\",\"type\":\"string[]\"}],\"name\":\"withdrawUserDataRight\",\"outputs\":[],\"selector\":[4211774851,2825282343],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
     };
 
     public static final String ABI = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", ABI_ARRAY);
@@ -62,8 +62,6 @@ public class DAEvidenceInterface extends Contract {
     public static final String FUNC_GETACCESSCONTROL = "getAccessControl";
 
     public static final String FUNC_GETCHAINNAME = "getChainName";
-
-    public static final String FUNC_GETCONTRACT = "getContract";
 
     public static final String FUNC_GETDATACOUNT = "getDataCount";
 
@@ -87,9 +85,9 @@ public class DAEvidenceInterface extends Contract {
 
     public static final String FUNC_GETUSERROLES = "getUserRoles";
 
-    public static final String FUNC_GETVERIFYDAEVIDENCE = "getVerifyDAEvidence";
+    public static final String FUNC_GETVERIFYEVIDENCE = "getVerifyEvidence";
 
-    public static final String FUNC_GETVERIFYDAEVIDENCEOFREVIEWER = "getVerifyDAEvidenceOfReviewer";
+    public static final String FUNC_GETVERIFYEVIDENCEOFREVIEWER = "getVerifyEvidenceOfReviewer";
 
     public static final String FUNC_GETSTRARRAYMAXLEN = "getstrArrayMaxLen";
 
@@ -99,7 +97,7 @@ public class DAEvidenceInterface extends Contract {
 
     public static final String FUNC_GRANTUSERROLES = "grantUserRoles";
 
-    public static final String FUNC_HASDAUSERMANAGEROLE = "hasDAUserManageRole";
+    public static final String FUNC_HASUSERMANAGEROLE = "hasUserManageRole";
 
     public static final String FUNC_QUERYUSERROLE = "queryUserRole";
 
@@ -108,8 +106,6 @@ public class DAEvidenceInterface extends Contract {
     public static final String FUNC_REVOKEUSERROLES = "revokeUserRoles";
 
     public static final String FUNC_SETCHAINNAME = "setChainName";
-
-    public static final String FUNC_SETCONTRACT = "setContract";
 
     public static final String FUNC_SETDATARIGHTCATEGORY = "setDataRightCategory";
 
@@ -126,7 +122,7 @@ public class DAEvidenceInterface extends Contract {
 
     public static final String FUNC_WITHDRAWUSERDATARIGHT = "withdrawUserDataRight";
 
-    protected DAEvidenceInterface(String contractAddress, Client client, CryptoKeyPair credential) {
+    protected IDREvidence(String contractAddress, Client client, CryptoKeyPair credential) {
         super(getBinary(client.getCryptoSuite()), contractAddress, client, credential);
     }
 
@@ -685,16 +681,6 @@ public class DAEvidenceInterface extends Contract {
         return executeCallWithSingleValueReturn(function, String.class);
     }
 
-    public String getContract(String logicName) throws ContractException {
-        final Function function =
-                new Function(
-                        FUNC_GETCONTRACT,
-                        Arrays.<Type>asList(
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(logicName)),
-                        Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
-        return executeCallWithSingleValueReturn(function, String.class);
-    }
-
     public BigInteger getDataCount(String bid) throws ContractException {
         final Function function =
                 new Function(
@@ -838,11 +824,11 @@ public class DAEvidenceInterface extends Contract {
                 convertToNative((List<Utf8String>) results.get(2).getValue()));
     }
 
-    public Tuple4<Boolean, String, List<String>, List<String>> getVerifyDAEvidence(
+    public Tuple4<Boolean, String, List<String>, List<String>> getVerifyEvidence(
             String udri, BigInteger index) throws ContractException {
         final Function function =
                 new Function(
-                        FUNC_GETVERIFYDAEVIDENCE,
+                        FUNC_GETVERIFYEVIDENCE,
                         Arrays.<Type>asList(
                                 new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(udri),
                                 new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint32(index)),
@@ -859,11 +845,11 @@ public class DAEvidenceInterface extends Contract {
                 convertToNative((List<Utf8String>) results.get(3).getValue()));
     }
 
-    public Tuple3<Boolean, List<String>, List<String>> getVerifyDAEvidenceOfReviewer(
+    public Tuple3<Boolean, List<String>, List<String>> getVerifyEvidenceOfReviewer(
             String udri, String reviewerBid, BigInteger index) throws ContractException {
         final Function function =
                 new Function(
-                        FUNC_GETVERIFYDAEVIDENCEOFREVIEWER,
+                        FUNC_GETVERIFYEVIDENCEOFREVIEWER,
                         Arrays.<Type>asList(
                                 new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(udri),
                                 new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(reviewerBid),
@@ -1090,10 +1076,10 @@ public class DAEvidenceInterface extends Contract {
                 convertToNative((List<Utf8String>) results.get(1).getValue()));
     }
 
-    public Boolean hasDAUserManageRole(String bid) throws ContractException {
+    public Boolean hasUserManageRole(String bid) throws ContractException {
         final Function function =
                 new Function(
-                        FUNC_HASDAUSERMANAGEROLE,
+                        FUNC_HASUSERMANAGEROLE,
                         Arrays.<Type>asList(
                                 new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(bid)),
                         Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
@@ -1271,58 +1257,6 @@ public class DAEvidenceInterface extends Contract {
         List<Type> results =
                 this.functionReturnDecoder.decode(data, function.getOutputParameters());
         return new Tuple1<String>((String) results.get(0).getValue());
-    }
-
-    public TransactionReceipt setContract(String logicName, String _LogicContract) {
-        final Function function =
-                new Function(
-                        FUNC_SETCONTRACT,
-                        Arrays.<Type>asList(
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(logicName),
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Address(_LogicContract)),
-                        Collections.<TypeReference<?>>emptyList(),
-                        0);
-        return executeTransaction(function);
-    }
-
-    public String getSignedTransactionForSetContract(String logicName, String _LogicContract) {
-        final Function function =
-                new Function(
-                        FUNC_SETCONTRACT,
-                        Arrays.<Type>asList(
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(logicName),
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Address(_LogicContract)),
-                        Collections.<TypeReference<?>>emptyList(),
-                        0);
-        return createSignedTransaction(function);
-    }
-
-    public String setContract(
-            String logicName, String _LogicContract, TransactionCallback callback) {
-        final Function function =
-                new Function(
-                        FUNC_SETCONTRACT,
-                        Arrays.<Type>asList(
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String(logicName),
-                                new org.fisco.bcos.sdk.v3.codec.datatypes.Address(_LogicContract)),
-                        Collections.<TypeReference<?>>emptyList(),
-                        0);
-        return asyncExecuteTransaction(function, callback);
-    }
-
-    public Tuple2<String, String> getSetContractInput(TransactionReceipt transactionReceipt) {
-        String data = transactionReceipt.getInput().substring(10);
-        final Function function =
-                new Function(
-                        FUNC_SETCONTRACT,
-                        Arrays.<Type>asList(),
-                        Arrays.<TypeReference<?>>asList(
-                                new TypeReference<Utf8String>() {},
-                                new TypeReference<Address>() {}));
-        List<Type> results =
-                this.functionReturnDecoder.decode(data, function.getOutputParameters());
-        return new Tuple2<String, String>(
-                (String) results.get(0).getValue(), (String) results.get(1).getValue());
     }
 
     public TransactionReceipt setDataRightCategory(List<String> fields) {
@@ -1760,15 +1694,15 @@ public class DAEvidenceInterface extends Contract {
                 convertToNative((List<Utf8String>) results.get(2).getValue()));
     }
 
-    public static DAEvidenceInterface load(
+    public static IDREvidence load(
             String contractAddress, Client client, CryptoKeyPair credential) {
-        return new DAEvidenceInterface(contractAddress, client, credential);
+        return new IDREvidence(contractAddress, client, credential);
     }
 
-    public static DAEvidenceInterface deploy(Client client, CryptoKeyPair credential)
+    public static IDREvidence deploy(Client client, CryptoKeyPair credential)
             throws ContractException {
         return deploy(
-                DAEvidenceInterface.class,
+                IDREvidence.class,
                 client,
                 credential,
                 getBinary(client.getCryptoSuite()),

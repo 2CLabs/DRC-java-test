@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.so
 
 interface IDREvidenceLogicMan {
     function setSelector(bytes4 selector, address logicAddress)  external;
+    function setSelectors(bytes4[] memory selectors, address[] memory logicAddresses)  external;
 }
 
-contract DAEvProxy is TransparentUpgradeableProxy {
+contract DREvProxy is TransparentUpgradeableProxy {
     mapping (bytes4 => address) private controllerSlector;
 
     constructor(address _logic, address admin_, bytes memory _data) TransparentUpgradeableProxy(_logic, admin_, _data) {}
@@ -25,6 +26,17 @@ contract DAEvProxy is TransparentUpgradeableProxy {
         return "";
     }
 
+    function _dispatchSetSelectors() private returns (bytes memory)  {
+        (bytes4[] memory selectors, address[] memory logicAddresses) = abi.decode(msg.data[4:], (bytes4[], address[]));
+        require(selectors.length > 0 && logicAddresses.length > 0, "selectors & logicAddresses length should be > 0");
+        require(selectors.length == logicAddresses.length, "selectors length should be equal to logicAddresses length");
+        uint32 len = uint32(selectors.length);
+        for(uint32 i = 0; i < len; i++) {
+            controllerSlector[selectors[i]] = logicAddresses[i];
+        }
+        return "";
+    }
+
     /**
      * @dev If caller is the admin process the call internally, otherwise transparently fallback to the proxy behavior
      */
@@ -35,8 +47,13 @@ contract DAEvProxy is TransparentUpgradeableProxy {
             if (selector == IDREvidenceLogicMan.setSelector.selector) {
                 ret = _dispatchSetSelector();
                 assembly {
-                return(add(ret, 0x20), mload(ret))
-            }
+                    return(add(ret, 0x20), mload(ret))
+                }
+            } else if (selector == IDREvidenceLogicMan.setSelectors.selector) {
+                ret = _dispatchSetSelectors();
+                assembly {
+                    return(add(ret, 0x20), mload(ret))
+                }
             } else {
                 super._fallback();
             }

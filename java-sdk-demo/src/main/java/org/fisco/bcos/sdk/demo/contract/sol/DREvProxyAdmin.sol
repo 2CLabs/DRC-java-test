@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-import "./DAEvProxy.sol";
+import "./DREvProxy.sol";
 
-contract DAEvProxyAdmin is ProxyAdmin {
+contract DREvProxyAdmin is ProxyAdmin {
     constructor() {}
 
     /**
@@ -18,4 +18,14 @@ contract DAEvProxyAdmin is ProxyAdmin {
         proxy.setSelector(selector, logicAddress);
     }
 
+    /**
+     * @dev Set contract address to handle  function
+     *
+     * Requirements:
+     *
+     * - This contract must be the current admin of `proxy`.
+     */
+    function setSelectors(IDREvidenceLogicMan proxy, bytes4[] memory selectors, address[] memory logicAddresses) public virtual onlyOwner {
+        proxy.setSelectors(selectors, logicAddresses);
+    }
 }

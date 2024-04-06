@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.0;
 
-import "./DAEvidenceStorageLib.sol";
-import "../utils/DAEvidenceMap.sol";
-import "./DAEvidenceStorageDefine.sol";
+import "./DREvidenceStorageLib.sol";
+import "../utils/DREvidenceMap.sol";
+import "./DREvidenceStorageDefine.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract DAEvidenceStorage is Initializable {
+contract DREvidenceStorage is Initializable {
 
-    DAEvidenceStorageDefine.DAEStorage internal dataStorage;
+    DREvidenceStorageDefine.DREStorage internal dataStorage;
 
     event UserCreated(address indexed sender, string indexed bid, string indexed usci);
     event UserRoleChanged(address indexed sender, string indexed bid);

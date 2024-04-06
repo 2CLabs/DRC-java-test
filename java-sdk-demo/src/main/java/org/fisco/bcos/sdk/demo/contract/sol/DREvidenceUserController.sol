@@ -1,47 +1,47 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./utils/DAEvidenceString.sol";
-import "./utils/DAEvidenceMap.sol";
-import "./DAAccessController.sol";
-import "./storage/DAEvidenceStorage.sol";
-import "./storage/DAEvidenceStorageLib.sol";
-import "./storage/DAEvidenceStorageDefine.sol";
-import "./storage/DAEvidenceStorageConstant.sol";
+import "./utils/DREvidenceString.sol";
+import "./utils/DREvidenceMap.sol";
+import "./DRAccessController.sol";
+import "./storage/DREvidenceStorage.sol";
+import "./storage/DREvidenceStorageLib.sol";
+import "./storage/DREvidenceStorageDefine.sol";
+import "./storage/DREvidenceStorageConstant.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
 
-contract DAEvidenceUserController is Initializable, DAAccessController, DAEvidenceStorage {
+contract DREvidenceUserController is Initializable, DRAccessController, DREvidenceStorage {
 
-    using DAEvidenceMap for DAEvidenceMap.DAMappingString;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingUint32;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingStringArray;
-    using DAEvidenceMap for DAEvidenceMap.DAMappingBytes32;
+    using DREvidenceMap for DREvidenceMap.DRMappingString;
+    using DREvidenceMap for DREvidenceMap.DRMappingUint32;
+    using DREvidenceMap for DREvidenceMap.DRMappingStringArray;
+    using DREvidenceMap for DREvidenceMap.DRMappingBytes32;
     using Strings for uint32;
-    using DAEvidenceString for string;
-    using DAEvidenceString for bytes32;
-    using DAEvidenceString for uint256;
-    // using DAEvidenceString for uint32;
+    using DREvidenceString for string;
+    using DREvidenceString for bytes32;
+    using DREvidenceString for uint256;
+    // using DREvidenceString for uint32;
 
-    using DAEvidenceStorageLib for DAEvidenceStorageDefine.DAEStorage;
+    using DREvidenceStorageLib for DREvidenceStorageDefine.DREStorage;
 
 
     /******************************************** 内部接口 **************************************************/
-    function _hasDAUserManageRole() internal view returns(bool) {
+    function _hasUserManageRole() internal view returns(bool) {
         (bool isExist, string memory bid) = dataStorage._getUserBidByAccount(msg.sender);
         require(isExist == true, "Sender is not registered.");
-        return hasDAUserManageRole(bid);
+        return hasUserManageRole(bid);
     }
 
     function _isDataRightEvidenceOwner(string memory udri) internal view returns(bool) {
         bytes32 innerEid = keccak256(
-            bytes(DAEvidenceStorageConstant.EVIDENCE_CATEGORY_RIGHT.concat(udri))
+            bytes(DREvidenceStorageConstant.EVIDENCE_CATEGORY_RIGHT.concat(udri))
         );
         (bool isExist, string memory bid) = dataStorage._getUserBidByAccount(msg.sender);
         require(isExist == true, "Sender is not registered.");
 
-        DAEvidenceStorageDefine.CommEvidence storage evidence = dataStorage._getCommEvidence(innerEid);
+        DREvidenceStorageDefine.CommEvidence storage evidence = dataStorage._getCommEvidence(innerEid);
         require(evidence.timestamp != 0, "evidence is not exist.");
 
         string memory bidInEvidence = dataStorage._getCommEvidenceIndefiniteString(innerEid, "bid");
@@ -58,13 +58,13 @@ contract DAEvidenceUserController is Initializable, DAAccessController, DAEviden
     function _checkUserRole(string memory role) internal view{
         (bool isExist, string memory bid) = dataStorage._getUserBidByAccount(msg.sender);
         require(isExist == true, "Sender is not registered.");
-        DAEvidenceStorageDefine.UserInfoV1 storage user = dataStorage._getUseStoragerByBid(bid);
-        require((user.indefiniteString.get(DAEvidenceStorageConstant.USER_ROLE_PREFIX.concat(role).hash()).equal("exist")) == true, "User without corresponding role permissions.");
+        DREvidenceStorageDefine.UserInfoV1 storage user = dataStorage._getUseStoragerByBid(bid);
+        require((user.indefiniteString.get(DREvidenceStorageConstant.USER_ROLE_PREFIX.concat(role).hash()).equal("exist")) == true, "User without corresponding role permissions.");
     }
 
     /******************************************** 用户 **************************************************/
     function queryUserRole() public view returns (string[] memory) {
-        return DAEvidenceStorageLib.queryUserRole();
+        return DREvidenceStorageLib.queryUserRole();
     }
     
     // 3.1 配置管理权限
@@ -75,7 +75,7 @@ contract DAEvidenceUserController is Initializable, DAAccessController, DAEviden
     - 调用限制
     该接口只有运营方(合约所有者)能调用。
 
-    DAAccessController 中已经定义
+    DRAccessController 中已经定义
     */
     // function grantUserManagePermission(string memory bid, address account) public {
     // }
@@ -86,7 +86,7 @@ contract DAEvidenceUserController is Initializable, DAAccessController, DAEviden
     - 调用限制
     该接口只有运营方(合约所有者)能调用。
 
-    DAAccessController 中已经定义
+    DRAccessController 中已经定义
     */
     // function revokeUserManagePermission(string memory bid) public {
     // }
@@ -140,10 +140,4 @@ contract DAEvidenceUserController is Initializable, DAAccessController, DAEviden
     function getDataList(string memory bid, uint256 start, uint256 count) public view returns (string[] memory udriArray) {
         return dataStorage.getDataList(bid, start, count);
     }
-
-    // function _implementation() internal view virtual override returns (address) {
-    //     address nextLogicContract = dataStorage.LogicAddress["next_logic_of_user"];
-    //     require(nextLogicContract != address(0), "Unknown function.");
-    //     return nextLogicContract;
-    // }
 }

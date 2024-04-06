@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 /**
  * @dev String operations.
  */
-library DAEvidenceString {
+library DREvidenceString {
     bytes16 private constant HEX_DIGITS = "0123456789abcdef";
 
     

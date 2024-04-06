@@ -5,9 +5,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.fisco.bcos.sdk.demo.contract.DAEvProxy;
-import org.fisco.bcos.sdk.demo.contract.DAEvProxyAdmin;
-import org.fisco.bcos.sdk.demo.contract.DAEvidenceInterface;
+import org.fisco.bcos.sdk.demo.contract.DREvProxy;
+import org.fisco.bcos.sdk.demo.contract.DREvProxyAdmin;
+import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -61,6 +61,16 @@ public class DAEvTestUpgradeReviewController {
         return sb.toString().trim();
     }
 
+    public static String toHexStringWithPadding(BigInteger bigInteger) {
+        String hexString = bigInteger.toString(16);
+
+        if (hexString.length() < 8) {
+            hexString = String.format("%8s", hexString).replace(' ', '0');
+        }
+
+        return hexString;
+    }
+
     public static void main(String[] args)
             throws ContractException, IOException, InterruptedException {
         try {
@@ -99,27 +109,20 @@ public class DAEvTestUpgradeReviewController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0x53b4af9bab0bdb650c0d35552f338d7a61e61483";
-            String strUserAddr = "0xbbb781bb9ca3a968b618d2d6c03d04e3f0fa1b9a";
-            String strRightAddr = "0xb9d0f8be8dcdcc73064cf3218328226d6e89e3eb";
-            String strReviewAddr = "0x7a588b0ca42f985d680e8a33a5227d2643e554fa";
-            String strProxyAdminaddr = "0xf118bd64a1d851abdc7ae5ee26656b87f085e03c";
-            String strProxyaddr = "0x646288eca221515adf7994e4ab0528ad3a6f0e5d";
-            String strNewReviewaddr = "0x5fefa24b168686f97405707d3edd6c4c80c330fd";
+            String strReviewAddr = "0xd71372b70579aafeff5ef4a961e1c8da07aca2e2";
+            String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
+            String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
+            String strNewReviewaddr = "0x3f2a56fda9faeff5b5d1cc03fa2ed8d0ee06ea94";
 
-            DAEvProxyAdmin yy = DAEvProxyAdmin.load(strProxyAdminaddr, client, committee);
-            System.out.println("Load DAEvProxyAdmin finish: " + strProxyAdminaddr);
-            DAEvProxy zz = DAEvProxy.load(strProxyaddr, client, committee);
-            System.out.println("Load DAEvProxy finish: " + strProxyaddr);
+            DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
+            System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
+            DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
+            System.out.println("Load DREvProxy finish: " + strProxyaddr);
 
-            DAEvidenceInterface xx_2 = DAEvidenceInterface.load(strProxyaddr, client, committee);
-            System.out.println("Load DAEvProxy as DAEvidenceInterface finish");
+            IDREvidence xx_2 = IDREvidence.load(strProxyaddr, client, committee);
+            System.out.println("Load DREvProxy as IDREvidence finish");
 
             System.out.println("---------------------------------------");
-
-            TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
-            System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
-            System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
 
             List<String> strArrQueryRole = new ArrayList<>();
             strArrQueryRole = xx_2.queryUserRole();
@@ -130,12 +133,51 @@ public class DAEvTestUpgradeReviewController {
             }
 
             System.out.println("---------------upgrade-------------------");
-            TransactionReceipt setContract_3 =
-                    xx_2.setContract("next_logic_of_right_evidence", strNewReviewaddr);
-            System.out.println("setContract_3 Tx status: " + setContract_3.isStatusOK());
-            System.out.println("setContract_3 TX hash: " + setContract_3.getTransactionHash());
-            String next3 = xx_2.getContract("next_logic_of_right_evidence");
-            System.out.println("next_logic_of_right_evidence address: " + next3);
+            /*List<String> strreviewSelector =
+            new ArrayList<String>() {
+                {
+                    add("4024293368"); // addReviewEvidence
+                    add("1485793629"); // getReviewCount
+                    add("3868489521"); // getReviewCountOfReviewer
+
+                    add("1855339097"); // getVerifyEvidence
+                    add("1591648918"); // getVerifyEvidenceOfReviewer
+                    add("932021754"); // withdrawReviewEvidence
+                }
+            };*/
+
+            List<String> strreviewSMSelector =
+                    new ArrayList<String>() {
+                        {
+                            add("766756406"); // addReviewEvidence
+                            add("1330250274"); // getReviewCount
+                            add("2826438872"); // getReviewCountOfReviewer
+
+                            add("4061585395"); // getVerifyEvidence
+                            add("3508812136"); // getVerifyEvidenceOfReviewer
+                            add("2229502562"); // withdrawReviewEvidence
+                        }
+                    };
+
+            List<byte[]> selectors = new ArrayList<byte[]>();
+            List<String> logicAddresses = new ArrayList<String>();
+
+            for (int i = 0; i < strreviewSMSelector.size(); i++) {
+                String element = strreviewSMSelector.get(i);
+                String tmp = toHexStringWithPadding(new BigInteger(element));
+                // System.out.println("after toHexStringWithPadding: " + tmp);
+                byte[] selector = hexStringToByteArray(tmp);
+                System.out.println(
+                        "strreviewSMSelector after hexStringToByteArray: "
+                                + byteArrayToHexString(selector));
+                selectors.add(selector);
+                logicAddresses.add(strNewReviewaddr);
+            }
+
+            TransactionReceipt setSelectors =
+                    yy.setSelectors(strProxyaddr, selectors, logicAddresses);
+            System.out.println("setSelectors review Tx status: " + setSelectors.isStatusOK());
+            System.out.println("setSelectors review TX hash: " + setSelectors.getTransactionHash());
 
             System.out.println("---------------------------------------");
             Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
@@ -172,7 +214,7 @@ public class DAEvTestUpgradeReviewController {
             System.out.println("reviewdatacount: " + reviewdatacount);
 
             Tuple4<Boolean, String, List<String>, List<String>> VerifyDataGetResult =
-                    xx_2.getVerifyDAEvidence("urd:001", new BigInteger("1"));
+                    xx_2.getVerifyEvidence("urd:001", new BigInteger("1"));
             System.out.println("VerifyDataGetResult 1: " + VerifyDataGetResult.getValue1());
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());

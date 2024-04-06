@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-library DAEvidenceStorageConstant {
+library DREvidenceStorageConstant {
     // 用户状态
     uint32 public constant USER_STATUS_ACTIVE = 100;
     uint32 public constant USER_STATUS_DISABLED = 500;

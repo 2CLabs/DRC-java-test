@@ -8,16 +8,16 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
 @SuppressWarnings("unchecked")
-public class DAEvidenceUtils extends Contract {
+public class DREvidenceUtils extends Contract {
     public static final String[] BINARY_ARRAY = {
-        "60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220c821c4ffbc7a5cabec83edefdbafc79b56a31c36e5ef8c712b91a761a0f6f25364736f6c634300080b0033"
+        "60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220bee5805a79b2eb63be9c8e900ef47681675505d4c69b1148d1e1fd417ad4552f64736f6c634300080b0033"
     };
 
     public static final String BINARY =
             org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", BINARY_ARRAY);
 
     public static final String[] SM_BINARY_ARRAY = {
-        "60566037600b82828239805160001a607314602a5763b95aa35560e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220ff9d66fb191f02eff014e190c602fb2f47461455b6debd52820c07b66930769964736f6c634300080b0033"
+        "60566037600b82828239805160001a607314602a5763b95aa35560e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212203fbbaa7232f1c9310aa0b2a76c041f8aa11ceffc61c5fec83c96d5e785e9735664736f6c634300080b0033"
     };
 
     public static final String SM_BINARY =
@@ -27,7 +27,7 @@ public class DAEvidenceUtils extends Contract {
 
     public static final String ABI = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", ABI_ARRAY);
 
-    protected DAEvidenceUtils(String contractAddress, Client client, CryptoKeyPair credential) {
+    protected DREvidenceUtils(String contractAddress, Client client, CryptoKeyPair credential) {
         super(getBinary(client.getCryptoSuite()), contractAddress, client, credential);
     }
 
@@ -39,15 +39,15 @@ public class DAEvidenceUtils extends Contract {
         return ABI;
     }
 
-    public static DAEvidenceUtils load(
+    public static DREvidenceUtils load(
             String contractAddress, Client client, CryptoKeyPair credential) {
-        return new DAEvidenceUtils(contractAddress, client, credential);
+        return new DREvidenceUtils(contractAddress, client, credential);
     }
 
-    public static DAEvidenceUtils deploy(Client client, CryptoKeyPair credential)
+    public static DREvidenceUtils deploy(Client client, CryptoKeyPair credential)
             throws ContractException {
         return deploy(
-                DAEvidenceUtils.class,
+                DREvidenceUtils.class,
                 client,
                 credential,
                 getBinary(client.getCryptoSuite()),
