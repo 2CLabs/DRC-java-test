@@ -20,14 +20,14 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DAEvTestUpgradeUserController {
+public class DREvTestUpgradeReviewController {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DAEvTestUpgradeUserController test===========");
+        System.out.println("===== DREvTestUpgradeReviewController test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgradeUserController [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeReviewController [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -76,7 +76,7 @@ public class DAEvTestUpgradeUserController {
         try {
             String configFileName = ConstantConfig.CONFIG_FILE_NAME;
             URL configUrl =
-                    DAEvTestUpgradeAdminController.class
+                    DREvTestUpgradeAdminController.class
                             .getClassLoader()
                             .getResource(configFileName);
             if (configUrl == null) {
@@ -109,10 +109,10 @@ public class DAEvTestUpgradeUserController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strUserAddr = "0x97559199e3baf6462e888a7393328dc4923c0f20";
+            String strReviewAddr = "0xd71372b70579aafeff5ef4a961e1c8da07aca2e2";
             String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
             String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
-            String strNewUseraddr = "0x7c619213c6a6439577c7921383a0f3a8f2096147";
+            String strNewReviewaddr = "0x3f2a56fda9faeff5b5d1cc03fa2ed8d0ee06ea94";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -133,57 +133,51 @@ public class DAEvTestUpgradeUserController {
             }
 
             System.out.println("---------------upgrade-------------------");
-            /*List<String> struserSelector =
+            /*List<String> strreviewSelector =
             new ArrayList<String>() {
                 {
-                    add("3239424820"); // addUser
-                    add("2573946725"); // getUserRoles
-                    add("2322354691"); // grantUserRoles
+                    add("4024293368"); // addReviewEvidence
+                    add("1485793629"); // getReviewCount
+                    add("3868489521"); // getReviewCountOfReviewer
 
-                    add("593762734"); // revokeUserRoles
-                    add("816278328"); // getDataCount
-                    add("2492434596"); // getDataList
-
-                    add("289407936"); // queryUserRole
-                    add("4233016450"); // revokeUserManagePermission
+                    add("1855339097"); // getVerifyEvidence
+                    add("1591648918"); // getVerifyEvidenceOfReviewer
+                    add("932021754"); // withdrawReviewEvidence
                 }
             };*/
 
-            List<String> struserSMSelector =
+            List<String> strreviewSMSelector =
                     new ArrayList<String>() {
                         {
-                            add("3652011643"); // addUser
-                            add("1585755409"); // getUserRoles
-                            add("115265356"); // grantUserRoles
+                            add("766756406"); // addReviewEvidence
+                            add("1330250274"); // getReviewCount
+                            add("2826438872"); // getReviewCountOfReviewer
 
-                            add("2271659916"); // revokeUserRoles
-                            add("3023591269"); // getDataCount
-                            add("1794719790"); // getDataList
-
-                            add("1912013404"); // queryUserRole
-                            add("2768200898"); // revokeUserManagePermission
+                            add("4061585395"); // getVerifyEvidence
+                            add("3508812136"); // getVerifyEvidenceOfReviewer
+                            add("2229502562"); // withdrawReviewEvidence
                         }
                     };
 
             List<byte[]> selectors = new ArrayList<byte[]>();
             List<String> logicAddresses = new ArrayList<String>();
 
-            for (int i = 0; i < struserSMSelector.size(); i++) {
-                String element = struserSMSelector.get(i);
+            for (int i = 0; i < strreviewSMSelector.size(); i++) {
+                String element = strreviewSMSelector.get(i);
                 String tmp = toHexStringWithPadding(new BigInteger(element));
                 // System.out.println("after toHexStringWithPadding: " + tmp);
                 byte[] selector = hexStringToByteArray(tmp);
                 System.out.println(
-                        "struserSMSelector after hexStringToByteArray: "
+                        "strreviewSMSelector after hexStringToByteArray: "
                                 + byteArrayToHexString(selector));
                 selectors.add(selector);
-                logicAddresses.add(strNewUseraddr);
+                logicAddresses.add(strNewReviewaddr);
             }
 
             TransactionReceipt setSelectors =
                     yy.setSelectors(strProxyaddr, selectors, logicAddresses);
-            System.out.println("setSelectors user Tx status: " + setSelectors.isStatusOK());
-            System.out.println("setSelectors user TX hash: " + setSelectors.getTransactionHash());
+            System.out.println("setSelectors review Tx status: " + setSelectors.isStatusOK());
+            System.out.println("setSelectors review TX hash: " + setSelectors.getTransactionHash());
 
             System.out.println("---------------------------------------");
             Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");

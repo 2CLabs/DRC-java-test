@@ -6,28 +6,27 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.fisco.bcos.sdk.demo.contract.DREvProxy;
-import org.fisco.bcos.sdk.demo.contract.DREvProxyAdmin;
 import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.ConstantConfig;
 import org.fisco.bcos.sdk.v3.model.CryptoType;
-import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DAEvTestUpgradeReviewController {
+public class DREvTestGet {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DAEvTestUpgradeReviewController test===========");
+        System.out.println("===== DREvTestGet test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestUpgradeReviewController [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -61,24 +60,11 @@ public class DAEvTestUpgradeReviewController {
         return sb.toString().trim();
     }
 
-    public static String toHexStringWithPadding(BigInteger bigInteger) {
-        String hexString = bigInteger.toString(16);
-
-        if (hexString.length() < 8) {
-            hexString = String.format("%8s", hexString).replace(' ', '0');
-        }
-
-        return hexString;
-    }
-
     public static void main(String[] args)
             throws ContractException, IOException, InterruptedException {
         try {
             String configFileName = ConstantConfig.CONFIG_FILE_NAME;
-            URL configUrl =
-                    DAEvTestUpgradeAdminController.class
-                            .getClassLoader()
-                            .getResource(configFileName);
+            URL configUrl = DREvTestGet.class.getClassLoader().getResource(configFileName);
             if (configUrl == null) {
                 throw new IOException("The configFile " + configFileName + " doesn't exist!");
             }
@@ -109,13 +95,8 @@ public class DAEvTestUpgradeReviewController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strReviewAddr = "0xd71372b70579aafeff5ef4a961e1c8da07aca2e2";
-            String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
             String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
-            String strNewReviewaddr = "0x3f2a56fda9faeff5b5d1cc03fa2ed8d0ee06ea94";
 
-            DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
-            System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
             DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DREvProxy finish: " + strProxyaddr);
 
@@ -123,7 +104,6 @@ public class DAEvTestUpgradeReviewController {
             System.out.println("Load DREvProxy as IDREvidence finish");
 
             System.out.println("---------------------------------------");
-
             List<String> strArrQueryRole = new ArrayList<>();
             strArrQueryRole = xx_2.queryUserRole();
             System.out.println("strArrQueryRole: " + strArrQueryRole.size());
@@ -132,58 +112,25 @@ public class DAEvTestUpgradeReviewController {
                 System.out.println("strArrQueryRole name: " + element);
             }
 
-            System.out.println("---------------upgrade-------------------");
-            /*List<String> strreviewSelector =
-            new ArrayList<String>() {
-                {
-                    add("4024293368"); // addReviewEvidence
-                    add("1485793629"); // getReviewCount
-                    add("3868489521"); // getReviewCountOfReviewer
-
-                    add("1855339097"); // getVerifyEvidence
-                    add("1591648918"); // getVerifyEvidenceOfReviewer
-                    add("932021754"); // withdrawReviewEvidence
-                }
-            };*/
-
-            List<String> strreviewSMSelector =
-                    new ArrayList<String>() {
-                        {
-                            add("766756406"); // addReviewEvidence
-                            add("1330250274"); // getReviewCount
-                            add("2826438872"); // getReviewCountOfReviewer
-
-                            add("4061585395"); // getVerifyEvidence
-                            add("3508812136"); // getVerifyEvidenceOfReviewer
-                            add("2229502562"); // withdrawReviewEvidence
-                        }
-                    };
-
-            List<byte[]> selectors = new ArrayList<byte[]>();
-            List<String> logicAddresses = new ArrayList<String>();
-
-            for (int i = 0; i < strreviewSMSelector.size(); i++) {
-                String element = strreviewSMSelector.get(i);
-                String tmp = toHexStringWithPadding(new BigInteger(element));
-                // System.out.println("after toHexStringWithPadding: " + tmp);
-                byte[] selector = hexStringToByteArray(tmp);
-                System.out.println(
-                        "strreviewSMSelector after hexStringToByteArray: "
-                                + byteArrayToHexString(selector));
-                selectors.add(selector);
-                logicAddresses.add(strNewReviewaddr);
+            System.out.println("---------------------------------------");
+            Tuple3<String, String, List<String>> getResult = xx_2.getUserRoles("bid");
+            System.out.println("getUserRoles result 1: " + getResult.getValue1());
+            System.out.println("getUserRoles result 2: " + getResult.getValue2());
+            System.out.println("getUserRoles result 3: " + getResult.getValue3().size());
+            for (int i = 0; i < getResult.getValue3().size(); i++) {
+                String element = getResult.getValue3().get(i);
+                System.out.println("getResult 3 Roles name: " + element);
             }
 
-            TransactionReceipt setSelectors =
-                    yy.setSelectors(strProxyaddr, selectors, logicAddresses);
-            System.out.println("setSelectors review Tx status: " + setSelectors.isStatusOK());
-            System.out.println("setSelectors review TX hash: " + setSelectors.getTransactionHash());
-
             System.out.println("---------------------------------------");
-            Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");
-            System.out.println("getResult after upgrade 1: " + getResult1.getValue1());
-            System.out.println("getResult after upgrade 2: " + getResult1.getValue2());
-            System.out.println("getResult after upgrade 3: " + getResult1.getValue3().size());
+            Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
+                    xx_2.getRegisteredData("urd:001"); // 成功
+            System.out.println("getRegisteredData result 1: " + resultnew.getValue1());
+            System.out.println("getRegisteredData result 2: " + resultnew.getValue2());
+            System.out.println("getRegisteredData result 3: " + resultnew.getValue3());
+            System.out.println("getRegisteredData result 4: " + resultnew.getValue4());
+            System.out.println("getRegisteredData result 5: " + resultnew.getValue5());
+            System.out.println("getRegisteredData result 6: " + resultnew.getValue6());
 
             System.out.println("---------------------------------------");
             List<String> strArrUserDataRight = new ArrayList<>();
@@ -194,6 +141,7 @@ public class DAEvTestUpgradeReviewController {
                 System.out.println("strArrUserDataRight name: " + element);
             }
             System.out.println("---------------------------------------");
+
             String strUdri =
                     xx_2.getUdriByDatahash(
                             "0xc24d340cca7669f4d8933635a0c09caa7d2ecfaba0b34053e32789168171e50a");
@@ -220,6 +168,10 @@ public class DAEvTestUpgradeReviewController {
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
             System.out.println("VerifyDataGetResult 4: " + VerifyDataGetResult.getValue4());
 
+            System.out.println("---------------------------------------");
+
+            // String strChainName = xx_2.getChainName(); // 成功
+            // System.out.println("strChainName: " + strChainName);
             System.out.println("---------------------------------------");
 
             blockNumber = client.getBlockNumber();

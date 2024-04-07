@@ -21,14 +21,14 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DAEvTestSet {
+public class DREvTestSet {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DAEvTestSet test===========");
+        System.out.println("===== DREvTestSet test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DAEvTestSet [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestSet [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -76,7 +76,7 @@ public class DAEvTestSet {
             throws ContractException, IOException, InterruptedException {
         try {
             String configFileName = ConstantConfig.CONFIG_FILE_NAME;
-            URL configUrl = DAEvTestSet.class.getClassLoader().getResource(configFileName);
+            URL configUrl = DREvTestSet.class.getClassLoader().getResource(configFileName);
             if (configUrl == null) {
                 throw new IOException("The configFile " + configFileName + " doesn't exist!");
             }
