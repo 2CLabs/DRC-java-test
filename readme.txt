@@ -54,50 +54,50 @@
      bash gradlew build
   (3) 运行 (后面的 group 和 密钥文件根据实际情况调整)
      cd dist
-     (3.1)測試各種設置功能
+     (3.1)测试各种设置功能
      java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestSet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-     (3.2)測試各種獲取功能
+     (3.2)测试各种获取功能
      java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-     (3.3)測試升級 admincontroller 合约功能
+     (3.3)测试升級 admincontroller 合约功能
          重新在 console中部署一个新的 DREvidenceAdminController
          deploy DAEvidenceAdminController
        	 记录下新地址, 修改 DAEvTestUpgradeAdminController.java 中的新 strNewAdminaddr 地址为新地址,重新 bash gradlew build
 	 运行升级
          java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeAdminController group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-       測試升級 admincontroller 合约 后原来的數據是否還在
+       测试升級 admincontroller 合约 后原来的数据是否还在
        java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
 
-     (3.4)測試升級 usercontroller 合约功能
+     (3.4)测试升級 usercontroller 合约功能
          重新在 console中部署一个新的 DREvidenceUserController
          deploy DREvidenceUserController
        	 记录下新地址, 修改 DREvTestUpgradeUserController.java 中的新 strNewUseraddr 地址为新地址,重新 bash gradlew build
 	 运行升级
          java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeUserController group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-       測試升級 usercontroller 合约 后原来的數據是否還在
+       测试升級 usercontroller 合约 后原来的数据是否还在
        java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
 
-     (3.5)測試升級 rightcontroller 合约功能
+     (3.5)测试升級 rightcontroller 合约功能
          重新在 console中部署一个新的 DREvidenceRightController
          deploy DREvidenceRightController
        	 记录下新地址, 修改 DREvTestUpgradeRightController.java 中的新 strNewRightaddr 地址为新地址,重新 bash gradlew build
 	 运行升级
          java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeRightController group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-       測試升級 rightcontroller 合约 后原来的數據是否還在
+       测试升級 rightcontroller 合约 后原来的数据是否还在
        java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
 
-     (3.6)測試升級 reviewcontroller 合约功能
+     (3.6)测试升級 reviewcontroller 合约功能
          重新在 console中部署一个新的 DREvidenceReviewController
          deploy DREvidenceReviewController
        	 记录下新地址, 修改 DREvTestUpgradeReivewController.java 中的新 strNewReviewaddr 地址为新地址,重新 bash gradlew build
 	 运行升级
          java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeReviewController group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
      
-       測試升級 reviewcontroller 合约 后原来的數據是否還在
+       测试升級 reviewcontroller 合约 后原来的数据是否还在
        java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet group0 /home/duvon/fisco/console/account/gm/0xf0a27ef37e77f6b9cfa8e3592172c9844d32975f.pem
 
 
