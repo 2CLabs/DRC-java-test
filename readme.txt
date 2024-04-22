@@ -6,8 +6,8 @@
   (1) 拷贝智能合约文件到FiscoBcos的console/contracts/solidity目录下
    cd ~
    cd fisco
-   git clone git@github.com:2CLabs/DA-java-test.git
-   cp -fr DA-java-test/java-sdk-demo/contracts/*.sol console/contracts/solidity/
+   git clone git@github.com:2CLabs/DRC-java-test.git
+   cp -fr DRC-java-test/java-sdk-demo/contracts/*.sol console/contracts/solidity/
    
    git clone git@github.com:2CLabs/DA-contract-standard.git
    cd DA-contract-standard
@@ -20,12 +20,12 @@
  (2)编译合约的java文件
    用 控制台下生成Java合约工具 运行
         bash contract2java.sh solidity -p org.fisco.bcos.sdk.demo.contract
-       运行成功之后，将会在console/contracts/sdk目录生成java、abi和bin目录 找到相关的java 文件 拷贝到 DA-java-test/java-sdk-demo/src/org.fisco.bcos.sdk.demo.contract 目录下
+       运行成功之后，将会在console/contracts/sdk目录生成java、abi和bin目录 找到相关的java 文件 拷贝到 DRC-java-test/java-sdk-demo/src/org.fisco.bcos.sdk.demo.contract 目录下
    
    编译合约调用的interface IDREvidence 对应的java文件
    用 控制台下生成Java合约工具 运行
         bash contract2java.sh solidity -s contracts/solidity/interfaces -p org.fisco.bcos.sdk.demo.contract
-       运行成功之后，在console/contracts/sdk/java 目录下 找到相关的 IDREvidence.java 文件 拷贝到 DA-java-test/java-sdk-demo/src/org.fisco.bcos.sdk.demo.contract 目录下
+       运行成功之后，在console/contracts/sdk/java 目录下 找到相关的 IDREvidence.java 文件 拷贝到 DRC-java-test/java-sdk-demo/src/org.fisco.bcos.sdk.demo.contract 目录下
    
  (3) 在console 部署 合约
    启动FiscoBcos console,进入控制台

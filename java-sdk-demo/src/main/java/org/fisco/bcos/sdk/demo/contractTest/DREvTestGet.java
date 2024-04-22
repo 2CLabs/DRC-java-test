@@ -95,7 +95,7 @@ public class DREvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
+            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
 
             DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DREvProxy finish: " + strProxyaddr);

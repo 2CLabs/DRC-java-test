@@ -140,4 +140,14 @@ contract DREvidenceUserController is Initializable, DRAccessController, DREviden
     function getDataList(string memory bid, uint256 start, uint256 count) public view returns (string[] memory udriArray) {
         return dataStorage.getDataList(bid, start, count);
     }
+
+    /* 查询用户审核存证数目 */
+    function getUserReviewCount(string calldata bid) public view returns (uint256 dataCount) {
+        return dataStorage.getUserReviewCount(bid);
+    }
+
+    /* 查询用户审核存证 数据Hash 列表 */
+    function getUserReviewList(string memory bid, uint256 start, uint256 count) public view returns (string[] memory hashArray) {
+        return dataStorage.getUserReviewList(bid, start, count);
+    }
 }

@@ -108,12 +108,12 @@ public class DREvTestSet {
             System.out.println("Account: " + strAccount);
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0x42efc7f5d5c30d2ad43fb28e97bbb6044a2cc3f3";
-            String strUserAddr = "0x97559199e3baf6462e888a7393328dc4923c0f20";
-            String strRightAddr = "0x092e294eb1288ff0e4c55631199a5aaebda0209a";
-            String strReviewAddr = "0xd71372b70579aafeff5ef4a961e1c8da07aca2e2";
-            String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
-            String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
+            String strAdminAddr = "0xa8cd128c9a74a15b0806f81a85a022a50b3fd440";
+            String strUserAddr = "0x7783317634b768855b983ea57257b066e5b624cb";
+            String strRightAddr = "0x50742868582b255e3e77bb157f79c5606c4a065a";
+            String strReviewAddr = "0xc303b4d7bf224fe78b0589297538f1d4f52908bb";
+            String strProxyAdminaddr = "0x0cf705e7c1d99fb3a1459a9d1514e060ec9264e8";
+            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);

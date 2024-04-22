@@ -109,10 +109,10 @@ public class DREvTestUpgradeUserController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strUserAddr = "0x97559199e3baf6462e888a7393328dc4923c0f20";
-            String strProxyAdminaddr = "0x393a661b853e6fa1033fd28d7742f6758e8abd38";
-            String strProxyaddr = "0x80cffaca93307b7d20ee738e118512297bf06c3c";
-            String strNewUseraddr = "0x7c619213c6a6439577c7921383a0f3a8f2096147";
+            String strUserAddr = "0x7783317634b768855b983ea57257b066e5b624cb";
+            String strProxyAdminaddr = "0x0cf705e7c1d99fb3a1459a9d1514e060ec9264e8";
+            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
+            String strNewUseraddr = "0x4a3e2a16f1d13ba87cdf1b8efe6911195bf17f72";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);

@@ -10,12 +10,13 @@ library DREvidenceStorageDefine {
         string bid; // 链上身份标识
         string usci;
         string name;
-        uint256 evidenceCount;
+        uint256 evidenceCount; //确权存证总数
         address account;
         DREvidenceMap.DRMappingStringArray indefiniteStringArray;
         DREvidenceMap.DRMappingString indefiniteString;
         DREvidenceMap.DRMappingUint32 indefiniteUint32;
         DREvidenceMap.DRMappingBytes32 indefiniteBytes32;
+        DREvidenceMap.DRMappingUint256 indefiniteUint256;
         mapping(bytes32 => uint32) role; // 0: 无； USER_STATUS_ACTIVE：正常； USER_STATUS_DISABLED：注销
 
         uint256 timestamp;
@@ -27,6 +28,7 @@ library DREvidenceStorageDefine {
         DREvidenceMap.DRMappingString indefiniteString;
         DREvidenceMap.DRMappingUint32 indefiniteUint32;
         DREvidenceMap.DRMappingBytes32 indefiniteBytes32;
+        DREvidenceMap.DRMappingUint256 indefiniteUint256;
 
         string[] metaData;
         DREvidenceMap.DRMappingString variableDataMap;
@@ -40,6 +42,7 @@ library DREvidenceStorageDefine {
         DREvidenceMap.DRMappingUint32 byte32ToUint32;
         DREvidenceMap.DRMappingBytes32 byte32ToBytes32;
         DREvidenceMap.DRMappingAddress byte32ToAddress;
+        DREvidenceMap.DRMappingUint256 byte32ToUint256;
     }
 
     struct DREStorage {

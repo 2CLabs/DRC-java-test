@@ -75,6 +75,24 @@ library DREvidenceMap {
         return set._kv[key];
     }
 
+    // DRMappingUint256
+    struct DRMappingUint256 {
+        mapping(bytes32 => uint256) _kv;
+    }
+
+    function update(DRMappingUint256 storage set, bytes32 key, uint256 value) internal returns (bool) {
+        set._kv[key] = value;
+        return true;
+    }
+
+    function add(DRMappingUint256 storage set, bytes32 key, uint256 value) internal returns (bool) {
+        return update(set, key, value);
+    }
+
+    function get(DRMappingUint256 storage set, bytes32 key) internal view returns (uint256) {
+        return set._kv[key];
+    }
+
     // DRMappingBytes32
     struct DRMappingBytes32 {
         mapping(bytes32 => bytes32) _kv;

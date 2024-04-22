@@ -63,13 +63,13 @@ contract DREvidenceAdminController is Initializable, DRAccessController, DREvide
 
     //set isAccessControlEnabled to true to enable access control
     function enableAccessControl() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        string memory keyStr = "control_enabled=";
+        string memory keyStr = DREvidenceStorageConstant.ADMIN_PARAM_CONTRACT_ACCESS;
         dataStorage.commData.byte32ToUint32.update(keyStr.hash(), 1);
     }
 
     //set isAccessControlEnabled to false to disable access control
     function disableAccessControl() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        string memory keyStr = "control_enabled=";
+        string memory keyStr = DREvidenceStorageConstant.ADMIN_PARAM_CONTRACT_ACCESS;
         dataStorage.commData.byte32ToUint32.update(keyStr.hash(), 0);
     }
 
@@ -90,7 +90,7 @@ contract DREvidenceAdminController is Initializable, DRAccessController, DREvide
     }
 
     function getAccessControl() public view returns(uint32 status) {
-        string memory keyStr = "control_enabled=";
+        string memory keyStr = DREvidenceStorageConstant.ADMIN_PARAM_CONTRACT_ACCESS;
         return dataStorage.commData.byte32ToUint32.get(keyStr.hash());
     }
 

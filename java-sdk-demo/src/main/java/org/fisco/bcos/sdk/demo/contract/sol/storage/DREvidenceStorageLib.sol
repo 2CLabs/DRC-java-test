@@ -21,6 +21,7 @@ library DREvidenceStorageLib {
     using DREvidenceMap for DREvidenceMap.DRMappingUint32;
     using DREvidenceMap for DREvidenceMap.DRMappingStringArray;
     using DREvidenceMap for DREvidenceMap.DRMappingBytes32;
+    using DREvidenceMap for DREvidenceMap.DRMappingUint256;
 
 
     function genEidViaUrdi(string memory udri, string memory method, string memory category) internal pure returns (bytes32 innerEid, string memory outerEidString) {
@@ -156,11 +157,23 @@ library DREvidenceStorageLib {
     }
 
     /* 新加用户确权存证数目 */
-    function _addEvidenceInUser(DREvidenceStorageDefine.DREStorage storage sto, string memory bid, bytes32 key, bytes32 value) internal {
+    function _addEvidenceInUser(DREvidenceStorageDefine.DREStorage storage sto, string memory bid, bytes32 value) internal {
         DREvidenceStorageDefine.UserInfoV1 storage user = sto._usersV1[bid];
         // require(bytes(usci).length > 0, "EvidenceStorage: Account not exists");
+        bytes32 key = DREvidenceStorageConstant.EVIDENCE_RIGHT_EID_WITH_INDEX.concat(user.evidenceCount.toHexStringWithoutPrefix()).hash();
         user.indefiniteBytes32.update(key, value);
         user.evidenceCount = user.evidenceCount + 1;
+    }
+
+    /* 新加用户审核存证数目 */
+    function _addReviewEvidenceInUser(DREvidenceStorageDefine.DREStorage storage sto, string memory bid, bytes32 value) internal {
+        DREvidenceStorageDefine.UserInfoV1 storage user = sto._usersV1[bid];
+        // 获取当前用户 审核存证数目
+        uint256 count = user.indefiniteUint256.get(DREvidenceStorageConstant.USER_REVIEW_COUNT.hash());
+        // require(bytes(usci).length > 0, "EvidenceStorage: Account not exists");
+        bytes32 key = DREvidenceStorageConstant.EVIDENCE_REVIEW_EID_WITH_INDEX.concat(count.toHexStringWithoutPrefix()).hash();
+        user.indefiniteBytes32.update(key, value);
+        user.indefiniteUint256.update(DREvidenceStorageConstant.USER_REVIEW_COUNT.hash(), count + 1);
     }
 
     /* 获取用户某个角色的状态 */
@@ -396,6 +409,11 @@ library DREvidenceStorageLib {
     //     require((user.indefiniteString.get(DREvidenceStorageConstant.USER_ROLE_PREFIX.concat(role).hash()).equal("exist")) == true, "User without corresponding role permissions.");
     // }
 
+    function getAccessControl(DREvidenceStorageDefine.DREStorage storage sto) internal view returns(uint32 status) {
+        string memory keyStr = DREvidenceStorageConstant.ADMIN_PARAM_CONTRACT_ACCESS;
+        return sto.commData.byte32ToUint32.get(keyStr.hash());
+    }
+
     /******************************************** 用户 **************************************************/
     function queryUserRole() internal pure returns (string[] memory) {
         // return ["dataRightOwner", "reviewer", "registry", "platform"];
@@ -502,6 +520,30 @@ library DREvidenceStorageLib {
         udriArray = udriArrayTmp;
     }
 
+    /* 查询用户审核存证数量 */
+    function getUserReviewCount(DREvidenceStorageDefine.DREStorage storage sto, string calldata bid) internal view returns (uint256 dataCount) {
+        require(_userExist(sto, bid) == true, "User already exist.");
+        DREvidenceStorageDefine.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        dataCount = user.indefiniteUint256.get(DREvidenceStorageConstant.USER_REVIEW_COUNT.hash());
+    }
+
+    /* 查询用户审核存证列表 */
+    function getUserReviewList(DREvidenceStorageDefine.DREStorage storage sto, string memory bid, uint256 start, uint256 count) internal view returns (string[] memory hashArray) {
+        require(_userExist(sto, bid) == true, "User already exist.");
+        require(count > 0, "count is invalid.");
+        DREvidenceStorageDefine.UserInfoV1 storage user = _getUseStoragerByBid(sto, bid);
+        uint256 j = 0;
+        string[] memory hashArrayTmp = new string[](count);
+        for(uint256 i = start; i < start + count; i++) {
+            bytes32 key = DREvidenceStorageConstant.EVIDENCE_REVIEW_EID_WITH_INDEX.concat(i.toHexStringWithoutPrefix()).hash();
+            bytes32 innerEid = user.indefiniteBytes32.get(key);
+            string [] memory reviewDataHash = _getCommEvidenceIndefiniteStringArray(sto, innerEid, "reviewDataHash");
+            hashArrayTmp[j] = reviewDataHash[0];
+            j++;
+        }
+        hashArray = hashArrayTmp;
+    }
+
     // 不安全的接口，确保调用前已经做了 udri 检查
     function getEvidenceReviewCount(DREvidenceStorageDefine.DREStorage storage sto, string memory udri)internal view returns (uint32 count) {
         bytes32 rightInnerEid = keccak256(bytes(DREvidenceStorageConstant.EVIDENCE_CATEGORY_RIGHT.concat(udri))); //确权存证 内部eid
@@ -545,6 +587,9 @@ library DREvidenceStorageLib {
         current_number = _getCommEvidenceIndefiniteUint32(sto, rightInnerEid, DREvidenceStorageConstant.EVIDENCE_DATA_REVIEW_COUNT);
         _setCommEvidenceIndefiniteUint32(sto, rightInnerEid, DREvidenceStorageConstant.EVIDENCE_DATA_REVIEW_COUNT, current_number + 1);
         _setCommEvidenceIndefiniteBytes32(sto, rightInnerEid, DREvidenceStorageConstant.EVIDENCE_DATA_REVIEW_INDEX.concat(current_number.toString()), innerEid);
+
+        // 添加关联到user，这样可以遍历用户所有审核存证
+        _addReviewEvidenceInUser(sto, reviewerBid, innerEid);
 
         _setVariableData(sto, innerEid, DREvidenceStorageConstant.EVIDENCE_CATEGORY_REVIEW, variableData);
 
@@ -752,7 +797,7 @@ library DREvidenceStorageLib {
 
         _setUdriOnChain(sto, udri, innerEid);
         // 添加关联到user，这样可以遍历用户所有确权存证
-        _addEvidenceInUser(sto, bid, DREvidenceStorageConstant.EVIDENCE_RIGHT_EID_WITH_INDEX.concat(user.evidenceCount.toHexStringWithoutPrefix()).hash(), innerEid);
+        _addEvidenceInUser(sto, bid, innerEid);
 
         // save variableData
         _setVariableData(sto, innerEid, DREvidenceStorageConstant.EVIDENCE_CATEGORY_RIGHT, variableData);
