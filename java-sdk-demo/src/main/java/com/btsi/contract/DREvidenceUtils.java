@@ -1,4 +1,4 @@
-package org.fisco.bcos.sdk.demo.contract;
+package com.btsi.contract;
 
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.contract.Contract;

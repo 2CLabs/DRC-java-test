@@ -1,12 +1,12 @@
-package org.fisco.bcos.sdk.demo.contractTest;
+package com.btsi.contractTest;
 
+import com.btsi.contract.DREvProxy;
+import com.btsi.contract.IDREvidence;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.fisco.bcos.sdk.demo.contract.DREvProxy;
-import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -26,7 +26,7 @@ public class DREvTestGet {
         System.out.println(" Usage:");
         System.out.println("===== DREvTestGet test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestGet [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' com.btsi.contractTest.DREvTestGet [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -95,7 +95,7 @@ public class DREvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
+            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
 
             DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DREvProxy finish: " + strProxyaddr);

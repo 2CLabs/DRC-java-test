@@ -1,13 +1,13 @@
-package org.fisco.bcos.sdk.demo.contractTest;
+package com.btsi.contractTest;
 
+import com.btsi.contract.DREvProxy;
+import com.btsi.contract.DREvProxyAdmin;
+import com.btsi.contract.IDREvidence;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.fisco.bcos.sdk.demo.contract.DREvProxy;
-import org.fisco.bcos.sdk.demo.contract.DREvProxyAdmin;
-import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -20,14 +20,14 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
-public class DREvTestUpgradeUserController {
+public class DREvTestUpgradeAdminController {
     private static Client client;
 
     public static void Usage() {
         System.out.println(" Usage:");
-        System.out.println("===== DREvTestUpgradeUserController test===========");
+        System.out.println("===== DREvTestUpgradeAdminController test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestUpgradeUserController [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' com.btsi.contractTest.DREvTestUpgradeAdminController [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -109,10 +109,10 @@ public class DREvTestUpgradeUserController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strUserAddr = "0x7783317634b768855b983ea57257b066e5b624cb";
-            String strProxyAdminaddr = "0x0cf705e7c1d99fb3a1459a9d1514e060ec9264e8";
-            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
-            String strNewUseraddr = "0x4a3e2a16f1d13ba87cdf1b8efe6911195bf17f72";
+            String strAdminAddr = "0xa0fbc0a975fcd9a5b07b78672703f1e575b251e9";
+            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
+            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
+            String strNewAdminaddr = "0xa4dffae533bb9b381ab7a1e108b748dbb1d3ba65";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -133,57 +133,79 @@ public class DREvTestUpgradeUserController {
             }
 
             System.out.println("---------------upgrade-------------------");
-            /*List<String> struserSelector =
+            // TransactionReceipt upgradeReceipt =
+            //        yy.upgrade(strProxyaddr, strNewAdminaddr); // 这个实际会调用 strProxyaddr 的
+            // System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());
+            // System.out.println("upgrade TX hash: " + upgradeReceipt.getTransactionHash());
+            /*List<String> stradminSelector =
             new ArrayList<String>() {
                 {
-                    add("3239424820"); // addUser
-                    add("2573946725"); // getUserRoles
-                    add("2322354691"); // grantUserRoles
+                    add("1980433629"); // disableAccessControl
+                    add("922088542"); // enableAccessControl
+                    add("2324699571"); // getDataRightCategory
 
-                    add("593762734"); // revokeUserRoles
-                    add("816278328"); // getDataCount
-                    add("2492434596"); // getDataList
+                    add("3869446330"); // getSupportVariableDataFields
+                    add("1037211317"); // grantUserManagePermission
+                    add("1290417574"); // hasUserManageRole
 
-                    add("289407936"); // queryUserRole
-                    add("4233016450"); // revokeUserManagePermission
+                    add("2167012380"); // initialize
+                    add("3234078498"); // setChainName
+                    add("2472945857"); // setDataRightCategory
+
+                    add("1199116808"); // setDataRightSupportVariableDataFields
+                    add("1356933702"); // setTextMaxLen
+                    add("3609374908"); // getChainName
+
+                    add("3460282540"); // getTextMaxLen
+                    add("905356897"); // getstrArrayMaxLen
+                    add("4229803393"); // getAccessControl
                 }
             };*/
 
-            List<String> struserSMSelector =
+            List<String> stradminSMSelector =
                     new ArrayList<String>() {
                         {
-                            add("3652011643"); // addUser
-                            add("1585755409"); // getUserRoles
-                            add("115265356"); // grantUserRoles
+                            add("2854924890"); // disableAccessControl
+                            add("1158894738"); // enableAccessControl
+                            add("3796759802"); // getDataRightCategory
 
-                            add("2271659916"); // revokeUserRoles
-                            add("3023591269"); // getDataCount
-                            add("1794719790"); // getDataList
+                            add("376683502"); // getSupportVariableDataFields
+                            add("3070963644"); // grantUserManagePermission
+                            add("3048132719"); // hasUserManageRole
 
-                            add("1912013404"); // queryUserRole
-                            add("2768200898"); // revokeUserManagePermission
+                            add("3932184381"); // initialize
+                            add("3307895570"); // setChainName
+                            add("2087572871"); // setDataRightCategory
+
+                            add("2135762870"); // setDataRightSupportVariableDataFields
+                            add("1285167137"); // setTextMaxLen
+                            add("728140679"); // getChainName
+
+                            add("1588090095"); // getTextMaxLen
+                            add("1921885619"); // getstrArrayMaxLen
+                            add("1904329564"); // getAccessControl
                         }
                     };
 
             List<byte[]> selectors = new ArrayList<byte[]>();
             List<String> logicAddresses = new ArrayList<String>();
 
-            for (int i = 0; i < struserSMSelector.size(); i++) {
-                String element = struserSMSelector.get(i);
+            for (int i = 0; i < stradminSMSelector.size(); i++) {
+                String element = stradminSMSelector.get(i);
                 String tmp = toHexStringWithPadding(new BigInteger(element));
                 // System.out.println("after toHexStringWithPadding: " + tmp);
                 byte[] selector = hexStringToByteArray(tmp);
                 System.out.println(
-                        "struserSMSelector after hexStringToByteArray: "
+                        "stradminSMSelector after hexStringToByteArray: "
                                 + byteArrayToHexString(selector));
                 selectors.add(selector);
-                logicAddresses.add(strNewUseraddr);
+                logicAddresses.add(strNewAdminaddr);
             }
 
             TransactionReceipt setSelectors =
                     yy.setSelectors(strProxyaddr, selectors, logicAddresses);
-            System.out.println("setSelectors user Tx status: " + setSelectors.isStatusOK());
-            System.out.println("setSelectors user TX hash: " + setSelectors.getTransactionHash());
+            System.out.println("setSelectors admin Tx status: " + setSelectors.isStatusOK());
+            System.out.println("setSelectors admin TX hash: " + setSelectors.getTransactionHash());
 
             System.out.println("---------------------------------------");
             Tuple3<String, String, List<String>> getResult1 = xx_2.getUserRoles("bid");

@@ -1,13 +1,13 @@
-package org.fisco.bcos.sdk.demo.contractTest;
+package com.btsi.contractTest;
 
+import com.btsi.contract.DREvProxy;
+import com.btsi.contract.DREvProxyAdmin;
+import com.btsi.contract.IDREvidence;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.fisco.bcos.sdk.demo.contract.DREvProxy;
-import org.fisco.bcos.sdk.demo.contract.DREvProxyAdmin;
-import org.fisco.bcos.sdk.demo.contract.IDREvidence;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
@@ -28,7 +28,7 @@ public class DREvTestSet {
         System.out.println(" Usage:");
         System.out.println("===== DREvTestSet test===========");
         System.out.println(
-                " \t java -cp 'conf/:lib/*:apps/*' org.fisco.bcos.sdk.demo.contractTest.DREvTestSet [groupId] [committeeAddr].");
+                " \t java -cp 'conf/:lib/*:apps/*' com.btsi.contractTest.DREvTestSet [groupId] [committeeAddr].");
     }
 
     public static byte[] hexStringToByteArray(String hex) {
@@ -108,12 +108,12 @@ public class DREvTestSet {
             System.out.println("Account: " + strAccount);
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0xa8cd128c9a74a15b0806f81a85a022a50b3fd440";
-            String strUserAddr = "0x7783317634b768855b983ea57257b066e5b624cb";
-            String strRightAddr = "0x50742868582b255e3e77bb157f79c5606c4a065a";
-            String strReviewAddr = "0xc303b4d7bf224fe78b0589297538f1d4f52908bb";
-            String strProxyAdminaddr = "0x0cf705e7c1d99fb3a1459a9d1514e060ec9264e8";
-            String strProxyaddr = "0xaa0ee611ba671ae96dc5c0728bb90ec01ed3bf38";
+            String strAdminAddr = "0xa0fbc0a975fcd9a5b07b78672703f1e575b251e9";
+            String strUserAddr = "0x810c4b153b2bdb6395d4b33a5968f7b51a607141";
+            String strRightAddr = "0x6c0c097ee9bbc4f4c394145215c77d97bf1d01c4";
+            String strReviewAddr = "0xe895e3928cf2766f53ed9e6bf4180cf0bfe4ec32";
+            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
+            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
