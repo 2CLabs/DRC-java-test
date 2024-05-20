@@ -41,13 +41,17 @@
 4 编译运行 java-sdk-demo (fisco java sdk 使用 fisco-bcos-java-sdk-3.6.0.jar)
   (1) 配置
      拷贝证书
+      cd java-sdk-demo
+      bash gradlew googleJavaFormat
+      bash gradlew build [将会产生dist文件夹]
       cd dist
       cp -r ~/fisco/gm_nodes/127.0.0.1/sdk/* conf
      调整配置文件
       cp ~/fisco/console/conf/config-example.toml conf/config.toml
-       修改 useSMCrypto = "true"
+       修改 conf/config.toml
+       useSMCrypto = "true"
        peers=["127.0.0.1:40200", "127.0.0.1:40201"]
-       keyStoreDir = "/home/duvon/fisco/gm_nodes/ca/accounts_gm"
+       keyStoreDir = "/home/duvon/fisco/gm_nodes/ca"
       下面的注释打开
        caCert = "conf/sm_ca.crt"                    # SM CA cert file path
        sslCert = "conf/sm_sdk.crt"                  # SM SSL cert file path

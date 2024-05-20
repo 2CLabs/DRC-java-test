@@ -95,7 +95,7 @@ public class DREvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
+            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
 
             DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DREvProxy finish: " + strProxyaddr);
@@ -124,13 +124,13 @@ public class DREvTestGet {
 
             System.out.println("---------------------------------------");
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData("urd:001"); // 成功
-            System.out.println("getRegisteredData result 1: " + resultnew.getValue1());
-            System.out.println("getRegisteredData result 2: " + resultnew.getValue2());
-            System.out.println("getRegisteredData result 3: " + resultnew.getValue3());
-            System.out.println("getRegisteredData result 4: " + resultnew.getValue4());
-            System.out.println("getRegisteredData result 5: " + resultnew.getValue5());
-            System.out.println("getRegisteredData result 6: " + resultnew.getValue6());
+                    xx_2.getDataRightEvidence("urd:001"); // 成功
+            System.out.println("getDataRightEvidence result 1: " + resultnew.getValue1());
+            System.out.println("getDataRightEvidence result 2: " + resultnew.getValue2());
+            System.out.println("getDataRightEvidence result 3: " + resultnew.getValue3());
+            System.out.println("getDataRightEvidence result 4: " + resultnew.getValue4());
+            System.out.println("getDataRightEvidence result 5: " + resultnew.getValue5());
+            System.out.println("getDataRightEvidence result 6: " + resultnew.getValue6());
 
             System.out.println("---------------------------------------");
             List<String> strArrUserDataRight = new ArrayList<>();

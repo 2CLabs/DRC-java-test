@@ -109,10 +109,10 @@ public class DREvTestUpgradeRightController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strRightAddr = "0x6c0c097ee9bbc4f4c394145215c77d97bf1d01c4";
-            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
-            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
-            String strNewRightaddr = "0xb1a5b5ab21fc11e19b7bb75f7181f7267389e848";
+            String strRightAddr = "0x3218f8de123d19bcefad3237d41417ceb5599937";
+            String strProxyAdminaddr = "0x2eac4952add934864e5cbfd04d4d3018a08c8f1e";
+            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
+            String strNewRightaddr = "0xa997675e84b7bdc0fed25db717251df599967d10";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -133,12 +133,13 @@ public class DREvTestUpgradeRightController {
             }
 
             System.out.println("---------------upgrade-------------------");
+            // 不再使用 DREvProxyAdmin.upgrade这种模式,而是采用 DREvProxyAdmin.setSelectors 这种模式升级
             /*List<String> strrightSelector =
             new ArrayList<String>() {
                 {
                     add("2635209621"); // addDataRightEvidence
                     add("2138450037"); // appendVariableData
-                    add("208288129"); // getRegisteredData
+                    add("606765522"); // getDataRightEvidence
 
                     add("633708824"); // getUdriByDatahash
                     add("1105228669"); // getUserDataRight
@@ -154,7 +155,7 @@ public class DREvTestUpgradeRightController {
                         {
                             add("3623663505"); // addDataRightEvidence
                             add("1301797456"); // appendVariableData
-                            add("3936625741"); // getRegisteredData
+                            add("519044862"); // getDataRightEvidence
 
                             add("3726531728"); // getUdriByDatahash
                             add("1195862205"); // getUserDataRight

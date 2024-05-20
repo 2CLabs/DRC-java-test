@@ -109,10 +109,10 @@ public class DREvTestUpgradeAdminController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0xa0fbc0a975fcd9a5b07b78672703f1e575b251e9";
-            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
-            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
-            String strNewAdminaddr = "0xa4dffae533bb9b381ab7a1e108b748dbb1d3ba65";
+            String strAdminAddr = "0x2eac4952add934864e5cbfd04d4d3018a08c8f1e";
+            String strProxyAdminaddr = "0x8e61b850837fe2fba149c6d4a9650f77d63e1ebf";
+            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
+            String strNewAdminaddr = "0x84c9938223dd4d12dc8d729a55c34e80b1a20a24";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -133,6 +133,7 @@ public class DREvTestUpgradeAdminController {
             }
 
             System.out.println("---------------upgrade-------------------");
+            // 不再使用 DREvProxyAdmin.upgrade这种模式,而是采用 DREvProxyAdmin.setSelectors 这种模式升级
             // TransactionReceipt upgradeReceipt =
             //        yy.upgrade(strProxyaddr, strNewAdminaddr); // 这个实际会调用 strProxyaddr 的
             // System.out.println("upgrade Tx status: " + upgradeReceipt.isStatusOK());

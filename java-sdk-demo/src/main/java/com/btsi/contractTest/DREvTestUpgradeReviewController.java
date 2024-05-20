@@ -109,10 +109,10 @@ public class DREvTestUpgradeReviewController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strReviewAddr = "0xe895e3928cf2766f53ed9e6bf4180cf0bfe4ec32";
-            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
-            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
-            String strNewReviewaddr = "0xd46f4f81176eb8065bb0e6e26bcf4430b5bfde71";
+            String strReviewAddr = "0x321e32ace6e5b8bb9172928d97f67eee9584ea5b";
+            String strProxyAdminaddr = "0x8e61b850837fe2fba149c6d4a9650f77d63e1ebf";
+            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
+            String strNewReviewaddr = "0x040fc6b7acd7e7e40b0bc605466bbd57b6eec576";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -133,6 +133,7 @@ public class DREvTestUpgradeReviewController {
             }
 
             System.out.println("---------------upgrade-------------------");
+            // 不再使用 DREvProxyAdmin.upgrade这种模式,而是采用 DREvProxyAdmin.setSelectors 这种模式升级
             /*List<String> strreviewSelector =
             new ArrayList<String>() {
                 {

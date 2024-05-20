@@ -108,12 +108,12 @@ public class DREvTestSet {
             System.out.println("Account: " + strAccount);
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0xa0fbc0a975fcd9a5b07b78672703f1e575b251e9";
-            String strUserAddr = "0x810c4b153b2bdb6395d4b33a5968f7b51a607141";
-            String strRightAddr = "0x6c0c097ee9bbc4f4c394145215c77d97bf1d01c4";
-            String strReviewAddr = "0xe895e3928cf2766f53ed9e6bf4180cf0bfe4ec32";
-            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
-            String strProxyaddr = "0xb96b1ceb674d7b8fb09d2151d329f48d36f9ab42";
+            String strAdminAddr = "0x2eac4952add934864e5cbfd04d4d3018a08c8f1e";
+            String strUserAddr = "0x69e093c49a59a1b6c420f968bf319ad05e59d0d8";
+            String strRightAddr = "0x3218f8de123d19bcefad3237d41417ceb5599937";
+            String strReviewAddr = "0x321e32ace6e5b8bb9172928d97f67eee9584ea5b";
+            String strProxyAdminaddr = "0x8e61b850837fe2fba149c6d4a9650f77d63e1ebf";
+            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -172,7 +172,7 @@ public class DREvTestSet {
                         {
                             add("2635209621"); // addDataRightEvidence
                             add("2138450037"); // appendVariableData
-                            add("208288129"); // getRegisteredData
+                            add("606765522"); // getDataRightEvidence
 
                             add("633708824"); // getUdriByDatahash
                             add("1105228669"); // getUserDataRight
@@ -180,6 +180,9 @@ public class DREvTestSet {
 
                             add("4211774851"); // withdrawUserDataRight
                             add("3258251539"); // grantUserDataRight
+
+                            add("4068645820"); // genDataRightEidViaUrdi
+                            add("2401931980"); // getDataRightEvidenceViaEid
                         }
                     };
 
@@ -193,6 +196,8 @@ public class DREvTestSet {
                             add("1855339097"); // getVerifyEvidence
                             add("1591648918"); // getVerifyEvidenceOfReviewer
                             add("932021754"); // withdrawReviewEvidence
+
+                            add("3928283679"); // genReviewEidViaUrdi
                         }
                     };*/
 
@@ -242,7 +247,7 @@ public class DREvTestSet {
                         {
                             add("3623663505"); // addDataRightEvidence
                             add("1301797456"); // appendVariableData
-                            add("3936625741"); // getRegisteredData
+                            add("519044862"); // getDataRightEvidence
 
                             add("3726531728"); // getUdriByDatahash
                             add("1195862205"); // getUserDataRight
@@ -250,6 +255,9 @@ public class DREvTestSet {
 
                             add("2825282343"); // withdrawUserDataRight
                             add("3358242835"); // grantUserDataRight
+
+                            add("1528694934"); // genDataRightEidViaUrdi
+                            add("631971877"); // getDataRightEvidenceViaEid
                         }
                     };
 
@@ -263,6 +271,8 @@ public class DREvTestSet {
                             add("4061585395"); // getVerifyEvidence
                             add("3508812136"); // getVerifyEvidenceOfReviewer
                             add("2229502562"); // withdrawReviewEvidence
+
+                            add("2438592906"); // genReviewEidViaUrdi
                         }
                     };
 
@@ -320,6 +330,10 @@ public class DREvTestSet {
             TransactionReceipt setSelectors =
                     yy.setSelectors(strProxyaddr, selectors, logicAddresses);
             System.out.println("setSelectors all Tx status: " + setSelectors.isStatusOK());
+            if (setSelectors.isStatusOK() == false) {
+                String errorInfo = new String(hexStringToByteArray(setSelectors.getOutput()));
+                System.out.println("setSelectors TX message: " + errorInfo);
+            }
             System.out.println("setSelectors all  TX hash: " + setSelectors.getTransactionHash());
 
             System.out.println("---------------------------------------");
@@ -344,6 +358,10 @@ public class DREvTestSet {
 
             TransactionReceipt grandReceipt = xx_2.grantUserManagePermission("bid", strAccount);
             System.out.println("grantUserManagePermission Tx status: " + grandReceipt.isStatusOK());
+            if (grandReceipt.isStatusOK() == false) {
+                String errorInfo = new String(hexStringToByteArray(grandReceipt.getOutput()));
+                System.out.println("grantUserManagePermission TX message: " + errorInfo);
+            }
             System.out.println(
                     "grantUserManagePermission TX hash: " + grandReceipt.getTransactionHash());
 
@@ -360,6 +378,10 @@ public class DREvTestSet {
             TransactionReceipt addCategoryReceipt = xx_2.setDataRightCategory(strCategory);
             System.out.println(
                     "setDataRightCategory Tx status: " + addCategoryReceipt.isStatusOK());
+            if (addCategoryReceipt.isStatusOK() == false) {
+                String errorInfo = new String(hexStringToByteArray(addCategoryReceipt.getOutput()));
+                System.out.println("setDataRightCategory TX message: " + errorInfo);
+            }
             System.out.println(
                     "setDataRightCategory TX hash: " + addCategoryReceipt.getTransactionHash());
 
@@ -378,6 +400,12 @@ public class DREvTestSet {
             System.out.println(
                     "setDataRightSupportVariableDataFields Tx status: "
                             + setDataRightSupportReceipt.isStatusOK());
+            if (setDataRightSupportReceipt.isStatusOK() == false) {
+                String errorInfo =
+                        new String(hexStringToByteArray(setDataRightSupportReceipt.getOutput()));
+                System.out.println(
+                        "setDataRightSupportVariableDataFields TX message: " + errorInfo);
+            }
             System.out.println(
                     "setDataRightSupportVariableDataFields TX hash: "
                             + setDataRightSupportReceipt.getTransactionHash());
@@ -396,6 +424,13 @@ public class DREvTestSet {
             TransactionReceipt setChainNameReceipt = xx_2.setChainName("elton");
             System.out.println("setChainName Tx status: " + setChainNameReceipt.isStatusOK());
             System.out.println("setChainName TX hash: " + setChainNameReceipt.getTransactionHash());
+
+            TransactionReceipt enableAccessControlReceipt = xx_2.enableAccessControl();
+            System.out.println(
+                    "enableAccessControl Tx status: " + enableAccessControlReceipt.isStatusOK());
+            System.out.println(
+                    "enableAccessControl TX hash: "
+                            + enableAccessControlReceipt.getTransactionHash());
 
             Boolean hasif = xx_2.hasUserManageRole("bid");
             System.out.println("hasUserManageRole hasif: " + hasif);
@@ -527,6 +562,10 @@ public class DREvTestSet {
                             strArrMetaData,
                             strArrvariableData);
             System.out.println("addDataRightEvidence Tx status: " + storeReceipt1.isStatusOK());
+            if (storeReceipt1.isStatusOK() == false) {
+                String errorInfo = new String(hexStringToByteArray(storeReceipt1.getOutput()));
+                System.out.println("addDataRightEvidence TX message: " + errorInfo);
+            }
             System.out.println(
                     "addDataRightEvidence TX hash: " + storeReceipt1.getTransactionHash());
 
@@ -546,13 +585,13 @@ public class DREvTestSet {
             System.out.println("---------------------------------------");
 
             Tuple6<String, String, List<String>, List<String>, List<String>, Boolean> resultnew =
-                    xx_2.getRegisteredData("urd:001"); // 成功
-            System.out.println("getRegisteredData result new 1: " + resultnew.getValue1());
-            System.out.println("getRegisteredData result new 2: " + resultnew.getValue2());
-            System.out.println("getRegisteredData result new 3: " + resultnew.getValue3());
-            System.out.println("getRegisteredData result new 4: " + resultnew.getValue4());
-            System.out.println("getRegisteredData result new 5: " + resultnew.getValue5());
-            System.out.println("getRegisteredData result new 6: " + resultnew.getValue6());
+                    xx_2.getDataRightEvidence("urd:001"); // 成功
+            System.out.println("getDataRightEvidence result new 1: " + resultnew.getValue1());
+            System.out.println("getDataRightEvidence result new 2: " + resultnew.getValue2());
+            System.out.println("getDataRightEvidence result new 3: " + resultnew.getValue3());
+            System.out.println("getDataRightEvidence result new 4: " + resultnew.getValue4());
+            System.out.println("getDataRightEvidence result new 5: " + resultnew.getValue5());
+            System.out.println("getDataRightEvidence result new 6: " + resultnew.getValue6());
 
             System.out.println("---------------------------------------");
             List<String> strArrUserDataRight = new ArrayList<>();
