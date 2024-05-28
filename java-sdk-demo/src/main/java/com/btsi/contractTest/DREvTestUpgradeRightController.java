@@ -109,10 +109,10 @@ public class DREvTestUpgradeRightController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strRightAddr = "0x3218f8de123d19bcefad3237d41417ceb5599937";
-            String strProxyAdminaddr = "0x2eac4952add934864e5cbfd04d4d3018a08c8f1e";
-            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
-            String strNewRightaddr = "0xa997675e84b7bdc0fed25db717251df599967d10";
+            String strRightAddr = "0xba3dfb74d42a0f5f3c73140b5c26b94b4b2bcd82";
+            String strProxyAdminaddr = "0xa5d00f85d874d6c9f7c3d6c7327c25155979fec5";
+            String strProxyaddr = "0xe1b5a60402464a8c1fe6ad1ea9d805cfe440b0d7";
+            String strNewRightaddr = "0xb047a417b96c48bcfbfd9a901dc4936fae8777b0";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -143,10 +143,13 @@ public class DREvTestUpgradeRightController {
 
                     add("633708824"); // getUdriByDatahash
                     add("1105228669"); // getUserDataRight
-                    add("2392051885"); // withdrawDataRightRegister
+                    add("3445852971"); // withdrawDataRight
 
                     add("4211774851"); // withdrawUserDataRight
                     add("3258251539"); // grantUserDataRight
+
+                    add("4068645820"); // genDataRightEidViaUrdi
+                    add("2401931980"); // getDataRightEvidenceViaEid
                 }
             };*/
 
@@ -159,10 +162,13 @@ public class DREvTestUpgradeRightController {
 
                             add("3726531728"); // getUdriByDatahash
                             add("1195862205"); // getUserDataRight
-                            add("1179902888"); // withdrawDataRightRegister
+                            add("3715655987"); // withdrawDataRight
 
                             add("2825282343"); // withdrawUserDataRight
                             add("3358242835"); // grantUserDataRight
+
+                            add("1528694934"); // genDataRightEidViaUrdi
+                            add("631971877"); // getDataRightEvidenceViaEid
                         }
                     };
 

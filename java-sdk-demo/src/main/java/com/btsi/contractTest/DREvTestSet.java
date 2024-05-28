@@ -108,12 +108,12 @@ public class DREvTestSet {
             System.out.println("Account: " + strAccount);
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strAdminAddr = "0x2eac4952add934864e5cbfd04d4d3018a08c8f1e";
-            String strUserAddr = "0x69e093c49a59a1b6c420f968bf319ad05e59d0d8";
-            String strRightAddr = "0x3218f8de123d19bcefad3237d41417ceb5599937";
-            String strReviewAddr = "0x321e32ace6e5b8bb9172928d97f67eee9584ea5b";
-            String strProxyAdminaddr = "0x8e61b850837fe2fba149c6d4a9650f77d63e1ebf";
-            String strProxyaddr = "0xc6b41b35637c88e57f06a30fa28daacdd766fc02";
+            String strAdminAddr = "0x86e76d2b43d9926a75684f7331edf3fbf00a6480";
+            String strUserAddr = "0x03ae40c699c07e2442747739f2ad0ef9c44b709f";
+            String strRightAddr = "0xba3dfb74d42a0f5f3c73140b5c26b94b4b2bcd82";
+            String strReviewAddr = "0xb4553254f958771efefc29e53147e3bf0c1d0911";
+            String strProxyAdminaddr = "0xa5d00f85d874d6c9f7c3d6c7327c25155979fec5";
+            String strProxyaddr = "0xe1b5a60402464a8c1fe6ad1ea9d805cfe440b0d7";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -176,7 +176,7 @@ public class DREvTestSet {
 
                             add("633708824"); // getUdriByDatahash
                             add("1105228669"); // getUserDataRight
-                            add("2392051885"); // withdrawDataRightRegister
+                            add("3445852971"); // withdrawDataRight
 
                             add("4211774851"); // withdrawUserDataRight
                             add("3258251539"); // grantUserDataRight
@@ -197,7 +197,8 @@ public class DREvTestSet {
                             add("1591648918"); // getVerifyEvidenceOfReviewer
                             add("932021754"); // withdrawReviewEvidence
 
-                            add("3928283679"); // genReviewEidViaUrdi
+                            add("2101214845"); // getReviewEvidenceViaEid
+                            add("2390601602"); // genReviewEid
                         }
                     };*/
 
@@ -251,7 +252,7 @@ public class DREvTestSet {
 
                             add("3726531728"); // getUdriByDatahash
                             add("1195862205"); // getUserDataRight
-                            add("1179902888"); // withdrawDataRightRegister
+                            add("3715655987"); // withdrawDataRight
 
                             add("2825282343"); // withdrawUserDataRight
                             add("3358242835"); // grantUserDataRight
@@ -272,7 +273,8 @@ public class DREvTestSet {
                             add("3508812136"); // getVerifyEvidenceOfReviewer
                             add("2229502562"); // withdrawReviewEvidence
 
-                            add("2438592906"); // genReviewEidViaUrdi
+                            add("1635642682"); // getReviewEvidenceViaEid
+                            add("4131535128"); // genReviewEid
                         }
                     };
 
@@ -628,20 +630,21 @@ public class DREvTestSet {
             }
 
             System.out.println("---------------withdrawUserDataRight-------------------");
-            List<String> strArrWithdrawDataRight =
+            List<String> strArrWithdrawUserDataRight =
                     new ArrayList<String>() {
                         {
                             add("process");
                         }
                     };
 
-            TransactionReceipt withdrawDataRightReceipt =
-                    xx_2.withdrawUserDataRight("urd:001", "bid", strArrWithdrawDataRight);
+            TransactionReceipt withdrawUserDataRightReceipt =
+                    xx_2.withdrawUserDataRight("urd:001", "bid", strArrWithdrawUserDataRight);
             System.out.println(
-                    "withdrawDataRightReceipt Tx status: " + withdrawDataRightReceipt.isStatusOK());
+                    "withdrawDataRightReceipt Tx status: "
+                            + withdrawUserDataRightReceipt.isStatusOK());
             System.out.println(
                     "withdrawDataRightReceipt TX hash: "
-                            + withdrawDataRightReceipt.getTransactionHash());
+                            + withdrawUserDataRightReceipt.getTransactionHash());
 
             List<String> strArrUserDataRightAfterWithdraw = new ArrayList<>();
             strArrUserDataRightAfterWithdraw = xx_2.getUserDataRight("urd:001", "bid");
@@ -652,8 +655,8 @@ public class DREvTestSet {
                 System.out.println("strArrUserDataRightAfterWithdraw name: " + element);
             }
 
-            System.out.println("---------------withdrawDataRightRegister-------------------");
-            List<String> strArrWithdrawDataRightRegister =
+            System.out.println("---------------withdrawDataRight-------------------");
+            List<String> strArrwithdrawDataRight =
                     new ArrayList<String>() {
                         {
                             // add("hold");
@@ -661,14 +664,12 @@ public class DREvTestSet {
                         }
                     };
 
-            TransactionReceipt withdrawDataRightRegisterReceipt =
-                    xx_2.withdrawDataRightRegister("urd:001", strArrWithdrawDataRightRegister);
+            TransactionReceipt withdrawDataRightReceipt =
+                    xx_2.withdrawDataRight("urd:001", strArrwithdrawDataRight);
             System.out.println(
-                    "withdrawDataRightRegister Tx status: "
-                            + withdrawDataRightRegisterReceipt.isStatusOK());
+                    "withdrawDataRight Tx status: " + withdrawDataRightReceipt.isStatusOK());
             System.out.println(
-                    "withdrawDataRightRegister TX hash: "
-                            + withdrawDataRightRegisterReceipt.getTransactionHash());
+                    "withdrawDataRight TX hash: " + withdrawDataRightReceipt.getTransactionHash());
 
             List<String> strArrUserDataRightAfterWithdraw2 = new ArrayList<>();
             strArrUserDataRightAfterWithdraw2 = xx_2.getUserDataRight("urd:001", "bid");
