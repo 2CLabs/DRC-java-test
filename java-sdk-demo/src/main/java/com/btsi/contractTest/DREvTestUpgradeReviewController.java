@@ -144,6 +144,9 @@ public class DREvTestUpgradeReviewController {
                     add("1855339097"); // getVerifyEvidence
                     add("1591648918"); // getVerifyEvidenceOfReviewer
                     add("932021754"); // withdrawReviewEvidence
+
+                    add("2101214845"); // getReviewEvidenceViaEid
+                    add("2390601602"); // genReviewEid
                 }
             };*/
 
@@ -157,6 +160,9 @@ public class DREvTestUpgradeReviewController {
                             add("4061585395"); // getVerifyEvidence
                             add("3508812136"); // getVerifyEvidenceOfReviewer
                             add("2229502562"); // withdrawReviewEvidence
+
+                            add("1635642682"); // getReviewEvidenceViaEid
+                            add("4131535128"); // genReviewEid
                         }
                     };
 
