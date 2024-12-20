@@ -10,6 +10,7 @@ import java.util.List;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple2;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple6;
@@ -95,7 +96,7 @@ public class DREvTestGet {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strProxyaddr = "0xe1b5a60402464a8c1fe6ad1ea9d805cfe440b0d7";
+            String strProxyaddr = "0x10995981baba83dc2a39eadfc0c35a13ce8b0d44";
 
             DREvProxy zz = DREvProxy.load(strProxyaddr, client, committee);
             System.out.println("Load DREvProxy finish: " + strProxyaddr);
@@ -172,6 +173,15 @@ public class DREvTestGet {
 
             // String strChainName = xx_2.getChainName(); // 成功
             // System.out.println("strChainName: " + strChainName);
+
+            String strUserAccount = xx_2.getUserAccount("bid");
+            System.out.println("strUserAccount: " + strUserAccount);
+
+            Tuple2<Boolean, String> checkAccountResult =
+                    xx_2.checkAccount("0x2cb4d66f92247fba32a4257594ca7a3839362053");
+            System.out.println("checkAccountResult 1: " + checkAccountResult.getValue1());
+            System.out.println("checkAccountResult 2: " + checkAccountResult.getValue2());
+
             System.out.println("---------------------------------------");
 
             blockNumber = client.getBlockNumber();

@@ -109,9 +109,9 @@ public class DREvTestUpgradeReviewController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strReviewAddr = "0xb4553254f958771efefc29e53147e3bf0c1d0911";
-            String strProxyAdminaddr = "0xa5d00f85d874d6c9f7c3d6c7327c25155979fec5";
-            String strProxyaddr = "0xe1b5a60402464a8c1fe6ad1ea9d805cfe440b0d7";
+            String strReviewAddr = "0xe3781dac55e433a4dc6c12ca2d1238c2f42a0618";
+            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
+            String strProxyaddr = "0x10995981baba83dc2a39eadfc0c35a13ce8b0d44";
             String strNewReviewaddr = "0x28f96eda9602534e9af600b8c0726c19b453e791";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);

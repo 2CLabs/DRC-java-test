@@ -11,6 +11,7 @@ import java.util.List;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple2;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple4;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -109,10 +110,10 @@ public class DREvTestUpgradeUserController {
             System.out.println("Account: " + committee.getAddress());
             client.getCryptoSuite().setCryptoKeyPair(committee);
 
-            String strUserAddr = "0x03ae40c699c07e2442747739f2ad0ef9c44b709f";
-            String strProxyAdminaddr = "0xa5d00f85d874d6c9f7c3d6c7327c25155979fec5";
-            String strProxyaddr = "0xe1b5a60402464a8c1fe6ad1ea9d805cfe440b0d7";
-            String strNewUseraddr = "0x04632c10bb380e082586a68d8f65d82fc6d6605d";
+            String strUserAddr = "0x2f72d6d8d128815fc59d592bbae076e8318fa6cc";
+            String strProxyAdminaddr = "0x7659ee55f7d0babd4912146fbb4d1ca44ca26831";
+            String strProxyaddr = "0x10995981baba83dc2a39eadfc0c35a13ce8b0d44";
+            String strNewUseraddr = "0x7b8b7e16b5fd325298d5fccf9ad862f39603d28f";
 
             DREvProxyAdmin yy = DREvProxyAdmin.load(strProxyAdminaddr, client, committee);
             System.out.println("Load DREvProxyAdmin finish: " + strProxyAdminaddr);
@@ -147,6 +148,8 @@ public class DREvTestUpgradeUserController {
 
                     add("289407936"); // queryUserRole
                     add("4233016450"); // revokeUserManagePermission
+                    add("4005145368"); // getUserAccount
+                    add("1771183142"); // checkAccount
                 }
             };*/
 
@@ -163,6 +166,8 @@ public class DREvTestUpgradeUserController {
 
                             add("1912013404"); // queryUserRole
                             add("2768200898"); // revokeUserManagePermission
+                            add("4236660667"); // getUserAccount
+                            add("1376509706"); // checkAccount
                         }
                     };
 
@@ -226,6 +231,15 @@ public class DREvTestUpgradeUserController {
             System.out.println("VerifyDataGetResult 2: " + VerifyDataGetResult.getValue2());
             System.out.println("VerifyDataGetResult 3: " + VerifyDataGetResult.getValue3());
             System.out.println("VerifyDataGetResult 4: " + VerifyDataGetResult.getValue4());
+
+            System.out.println("---------------------------------------");
+            String strUserAccount = xx_2.getUserAccount("bid");
+            System.out.println("strUserAccount: " + strUserAccount);
+
+            Tuple2<Boolean, String> checkAccountResult =
+                    xx_2.checkAccount("0x2cb4d66f92247fba32a4257594ca7a3839362053");
+            System.out.println("checkAccountResult 1: " + checkAccountResult.getValue1());
+            System.out.println("checkAccountResult 2: " + checkAccountResult.getValue2());
 
             System.out.println("---------------------------------------");
 
